@@ -46,7 +46,23 @@ public class Engine {
         // See proj3.byow.InputDemo for a demo of how you can make a nice clean interface
         // that works for many different input types.
 
+        String seed = "";
         TETile[][] finalWorldFrame = null;
+        for (int i = 1; i < input.length() - 1; i++) {
+            seed+=input.charAt(i);
+
+
+        }
+        String[] a = new String[1];
+        a[0] = "123";
+
+
+        //MakeWorld.main(a);
+        finalWorldFrame = CreateWorld.world;
+
+
         return finalWorldFrame;
     }
+
+
 }
