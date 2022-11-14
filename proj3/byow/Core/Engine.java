@@ -8,6 +8,7 @@ public class Engine {
     /* Feel free to change the width and height. */
     public static final int WIDTH = 80;
     public static final int HEIGHT = 30;
+    public String seed = "";
 
     /**
      * Method used for exploring a fresh world. This method should handle all inputs,
@@ -38,29 +39,19 @@ public class Engine {
      * @return the 2D TETile[][] representing the state of the world
      */
     public TETile[][] interactWithInputString(String input) {
-        // TODO: Fill out this method so that it run the engine using the input
         // passed in as an argument, and return a 2D tile representation of the
         // world that would have been drawn if the same inputs had been given
         // to interactWithKeyboard().
         //
         // See proj3.byow.InputDemo for a demo of how you can make a nice clean interface
         // that works for many different input types.
-
-        String seed = "";
-        TETile[][] finalWorldFrame = null;
+        TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
         for (int i = 1; i < input.length() - 1; i++) {
             seed+=input.charAt(i);
-
-
         }
         String[] a = new String[1];
-        a[0] = "123";
-
-
-        //MakeWorld.main(a);
-        finalWorldFrame = CreateWorld.world;
-
-
+        a[0]= "n123s";
+        CreateWorld.main(a);
         return finalWorldFrame;
     }
 
