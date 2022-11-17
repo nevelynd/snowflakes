@@ -5,20 +5,20 @@ import byow.TileEngine.Tileset;
 import java.util.Random;
 
 public class Hallway {
-    public static final int ROOMMAX = 30;
-    public static final int ROOMMIN = 3;
+    public static final int HALLWAYMAX = 10;
+    public static final int HALLWAYMIN = 3;
     public static final Random r = new Random(1);
-    public static final int WIDTH = r.nextInt(ROOMMIN, ROOMMAX);
-    public static final int HEIGHT = r.nextInt(ROOMMIN, ROOMMAX);
+    public static final int WIDTH = r.nextInt(HALLWAYMIN, HALLWAYMAX);
+    public static final int HEIGHT = r.nextInt(HALLWAYMIN, HALLWAYMAX);
 
 
     public static void main(String[] args) {
         TERenderer ter = new TERenderer();
-        ter.initialize(ROOMMAX, ROOMMAX);
+        ter.initialize(HALLWAYMIN, HALLWAYMAX);
 
-        TETile[][] world = new TETile[ROOMMAX][ROOMMAX];
-        for (int x = 0; x < ROOMMAX; x += 1) {
-            for (int y = 0; y < ROOMMAX; y += 1) {
+        TETile[][] world = new TETile[HALLWAYMIN][HALLWAYMAX];
+        for (int x = 0; x < HALLWAYMIN; x += 1) {
+            for (int y = 0; y < HALLWAYMIN; y += 1) {
                 world[x][y] = Tileset.NOTHING;
             }
         }

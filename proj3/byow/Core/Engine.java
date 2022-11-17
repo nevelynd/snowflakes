@@ -49,9 +49,15 @@ public class Engine {
         for (int i = 1; i < input.length() - 1; i++) {
             seed+=input.charAt(i);
         }
-        String[] a = new String[1];
-        a[0]= "n123s";
-        CreateWorld.main(a);
+        String[] a = new String[3];
+        a[0]= "123";
+        String width = String.valueOf(WIDTH);
+        String height = String.valueOf(HEIGHT);
+        a[1]= width;
+        a[2]= height;
+
+
+
         return finalWorldFrame;
     }
 

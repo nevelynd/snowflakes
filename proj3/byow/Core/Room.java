@@ -3,52 +3,77 @@ import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 import java.util.Random;
+import java.util.HashMap;
+import java.awt.Rectangle;
+
 
 public class Room {
     public static final int ROOMMAX = 30;
     public static final int ROOMMIN = 3;
-    public static final Random r = new Random(1);
-    public static final int WIDTH = r.nextInt(ROOMMIN, ROOMMAX);
-    public static final int HEIGHT = r.nextInt(ROOMMIN, ROOMMAX);
 
+    public static final HashMap coords = new HashMap<Integer, Integer>();
+    public static final HashMap walls = new HashMap<Integer, Integer>();
+    public static final HashMap floors = new HashMap<Integer, Integer>();
+
+
+    public static void drawRoom() {
+        Random r = new Random(1);
+        int width = r.nextInt(ROOMMIN, ROOMMAX);
+        int height = r.nextInt(ROOMMIN, ROOMMAX);
+        Random r2 = new Random(1);
+        int x = r2.nextInt(ROOMMIN, ROOMMAX);
+        int y = r2.nextInt(ROOMMIN, ROOMMAX);
+
+        Rectangle room = new Rectangle(x,y,width, height);
+        for (int i=x ; i<=width+x;i=+1) {
+            for (int iy=y ; iy<=height+y;iy=+1) {
+                coords.put(i,iy);
+                if (x==width-1 || y==height-1||x==i || y==iy) {
+                    walls.put(i, iy);
+                }
+                else  {
+                    floors.put(i,iy);
+                }
+
+            }
+        }
+        System.out.println(coords);
+
+    }
 
 
 
     public static void main(String[] args) {
-        TERenderer ter = new TERenderer();
-        ter.initialize(ROOMMAX, ROOMMAX);
+        Random r = new Random(1);
+        int width = r.nextInt(ROOMMIN, ROOMMAX);
+        int height = r.nextInt(ROOMMIN, ROOMMAX);
 
-        TETile[][] world = new TETile[ROOMMAX][ROOMMAX];
-        for (int x = 0; x < ROOMMAX; x += 1) {
-            for (int y = 0; y < ROOMMAX; y += 1) {
-                world[x][y] = Tileset.NOTHING;
+
+
+
+        TERenderer ter = new TERenderer();
+        ter.initialize(width, height);
+
+        TETile[][] room = new TETile[width][height];
+
+        for (int x = 0; x < width; x += 1) {
+            for (int y = 0; y < height; y += 1) {
+                if (x==width-1 || y==height-1||x==0 || y==0) {
+                    room[x][y] = Tileset.WALL;
+                }
+                else {
+                    room[x][y] = Tileset.FLOOR;
+                }
             }
         }
 
-        for (int x = 0; x < WIDTH; x += 1) {
-            int y = 0;
-            world[x][y] = Tileset.FLOWER;
-        }
-        for (int x = 0; x < WIDTH; x += 1) {
-            int y = HEIGHT - 1;
-            world[x][y] = Tileset.FLOWER;
-        }
 
-        for (int y = 0; y < HEIGHT; y += 1) {
-            int x = WIDTH -1 ;
-            world[x][y] = Tileset.FLOWER;
-        }
-        for (int y = 0; y < HEIGHT; y += 1) {
-            int x = 0;
-
-            world[x][y] = Tileset.FLOWER;
-        }
 
 
 
 
         // draws the world to the screen
-        ter.renderFrame(world);
+        ter.renderFrame(room);
     }
 
 
