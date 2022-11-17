@@ -12,7 +12,7 @@ public class CreateWorld {
 
 
 
-    private static final  String S = "123";
+    private static final String S = "1234";
     private  static final int ROOMMAX = 30;
     private static final int ROOMMIN = 3;
 
@@ -20,6 +20,10 @@ public class CreateWorld {
 
 
     public static void main(String[] args) {
+
+
+
+
         HashMap<Integer, HashSet<Integer>> coords = new HashMap<Integer, HashSet<Integer>>();
         HashMap walls = new HashMap<Integer, Integer>();
         HashMap floors = new HashMap<Integer, Integer>();
@@ -36,13 +40,13 @@ public class CreateWorld {
 
         for (int x = 0; x < width; x += 1) {
             for (int y = 0; y < height; y += 1) {
-                world[x][y] = Tileset.FLOWER;
+                world[x][y] = Tileset.NOTHING;
             }
         }
 
         //determine how many times to generate rooms
         Random r3 = new Random(Integer.parseInt(S));
-        int numofrooms = 10;
+        int numofrooms = r3.nextInt(20);
 
         while (numofrooms>0) {
             //determine width and height of room
@@ -121,7 +125,7 @@ public class CreateWorld {
 
         ter.renderFrame(world);
 
-        System.out.println(coords);
+        //System.out.println(coords);
 
 
 
