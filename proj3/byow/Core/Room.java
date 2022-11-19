@@ -74,6 +74,8 @@ public class Room {
 
         // draws the world to the screen
         ter.renderFrame(room);
+
+        // :) Looking good!
     }
 
 

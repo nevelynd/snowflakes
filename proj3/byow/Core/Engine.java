@@ -3,6 +3,10 @@ package byow.Core;
 import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 
+import java.util.Random;
+
+import static byow.Core.WorldDemo.makeRooms;
+
 public class Engine {
     TERenderer ter = new TERenderer();
     /* Feel free to change the width and height. */
@@ -58,6 +62,15 @@ public class Engine {
 
 
 
+        return finalWorldFrame;
+    }
+
+    public TETile[][] interactWithInputCheese(String input) {
+        Random RANDOM = null;
+        long SEED = Integer.parseInt(input);
+        RANDOM = new Random(SEED);
+        TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
+        makeRooms(finalWorldFrame, RANDOM);
         return finalWorldFrame;
     }
 
