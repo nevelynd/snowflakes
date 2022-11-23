@@ -2,6 +2,8 @@ package byow.Core;
 
 import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
+import java.util.Random;
+
 
 public class Engine {
     TERenderer ter = new TERenderer();
@@ -45,20 +47,15 @@ public class Engine {
         //
         // See proj3.byow.InputDemo for a demo of how you can make a nice clean interface
         // that works for many different input types.
+        Random RANDOM = null;
+        long SEED = Integer.parseInt(input);
+        RANDOM = new Random(SEED);
         TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
-        for (int i = 1; i < input.length() - 1; i++) {
-            seed+=input.charAt(i);
-        }
-        String[] a = new String[3];
-        a[0]= "123";
-        String width = String.valueOf(WIDTH);
-        String height = String.valueOf(HEIGHT);
-        a[1]= width;
-        a[2]= height;
-
-
-
+        WorldDemo.makeRooms(finalWorldFrame, RANDOM);
         return finalWorldFrame;
+
+
+
     }
 
 

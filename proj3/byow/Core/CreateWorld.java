@@ -25,13 +25,11 @@ public class CreateWorld {
 
 
         HashMap<Integer, HashSet<Integer>> coords = new HashMap<Integer, HashSet<Integer>>();
-        HashMap walls = new HashMap<Integer, Integer>();
-        HashMap floors = new HashMap<Integer, Integer>();
+        HashMap roomtohallways = new HashMap<Rectangle, Rectangle>();
+        HashMap<Integer, HashSet<Integer>> wall = new HashMap<Integer, HashSet<Integer>>();
+        HashMap<Integer, HashSet<Integer>> floor = new HashMap<Integer, HashSet<Integer>>();
         int width = Engine.WIDTH;
         int height = Engine.HEIGHT;
-
-
-
 
 
         TERenderer ter = new TERenderer();
@@ -46,15 +44,16 @@ public class CreateWorld {
 
         //determine how many times to generate rooms
         Random r3 = new Random(Integer.parseInt(S));
-        int numofrooms = r3.nextInt(20);
-
+        int numofrooms = r3.nextInt(200);
+        Random r = new Random(1);
+        Random r2 = new Random(156);
         while (numofrooms>0) {
             //determine width and height of room
-            Random r = new Random(1);
+
             int rwidth = r.nextInt(ROOMMIN, 5);
             int rheight = r.nextInt(ROOMMIN, 5);
             //random x,y position to place bottom left corner of room
-            Random r2 = new Random(156);
+
             int xr = r2.nextInt( width-rwidth);
             int yr = r2.nextInt( height-rheight);
             int numofin = 1;
@@ -68,8 +67,8 @@ public class CreateWorld {
                     }
                 }
                 if (numofin != 0) {
-                    rwidth = r.nextInt(ROOMMIN, 5);
-                    rheight = r.nextInt(ROOMMIN, 5);
+                    rwidth = r.nextInt(ROOMMIN, 10);
+                    rheight = r.nextInt(ROOMMIN, 10);
 
 
                     xr = r2.nextInt( ROOMMAX-rwidth);
@@ -80,7 +79,9 @@ public class CreateWorld {
             }
 
 
-            //Rectangle room = new Rectangle(xr,yr,rwidth, rheight);
+            Rectangle room = new Rectangle(xr,yr,rwidth, rheight);
+            Rectangle hallway = new Rectangle();
+            roomtohallways.put(room,hallway);
             for (int i=xr ; i<=rwidth+xr;i+=1) {
                 for (int iy=yr ; iy<=rheight+yr;iy+=1) {
                     if (!coords.containsKey(i)) {
