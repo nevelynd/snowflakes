@@ -2,25 +2,49 @@ package byow.Core;
 
 import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
+import edu.princeton.cs.introcs.StdDraw;
+
+import java.awt.*;
+import java.util.ArrayList;
 import java.util.Random;
 
 
 import java.util.Random;
 
 import static byow.Core.WorldDemo.makeRooms;
+import java.util.List;
 
 public class Engine {
     TERenderer ter = new TERenderer();
     /* Feel free to change the width and height. */
     public static final int WIDTH = 80;
     public static final int HEIGHT = 30;
-    public String seed = "";
 
     /**
      * Method used for exploring a fresh world. This method should handle all inputs,
      * including inputs from the main menu.
      */
     public void interactWithKeyboard() {
+        StdDraw.setCanvasSize(WIDTH * 16 , HEIGHT * 16);
+        Font font = new Font("Monaco", Font.BOLD, 30);
+        Font smallfont = new Font("Monaco", Font.BOLD, 15);
+        StdDraw.setFont(font);
+        StdDraw.setXscale(0, WIDTH);
+        StdDraw.setYscale(0, HEIGHT);
+        StdDraw.clear(Color.BLACK);
+        StdDraw.enableDoubleBuffering();
+        StdDraw.setPenColor(Color.WHITE);
+        StdDraw.text(WIDTH / 2, 4* HEIGHT / 5, "CS61B: THE GAME");
+        StdDraw.show();
+        StdDraw.setFont(smallfont);
+        StdDraw.text(WIDTH / 2, HEIGHT / 2, "Load Game (L)");
+        StdDraw.show();
+        StdDraw.text(WIDTH / 2,  HEIGHT / 2 + 2, "New Game (N)");
+        StdDraw.show();
+        StdDraw.text(WIDTH / 2,  HEIGHT / 2 - 2, "Quit (Q)");
+        StdDraw.show();
+
+
     }
 
     /**
@@ -52,7 +76,19 @@ public class Engine {
         // See proj3.byow.InputDemo for a demo of how you can make a nice clean interface
         // that works for many different input types.
         Random RANDOM = null;
-        long SEED = Integer.parseInt(input);
+        String seed = "";
+        List<Character> nums = new ArrayList();
+        for (int i = 0; i <=9; i++) {
+            nums.add((char) i);
+        }
+        for (int i = 0; i < input.length(); i++ ) {
+            if (nums.contains(input.charAt(i))) {
+                seed += input.charAt(i);
+            }
+        }
+
+
+        long SEED = Integer.parseInt(seed);
         RANDOM = new Random(SEED);
         TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
         WorldDemo.makeRooms(finalWorldFrame, RANDOM);
@@ -60,15 +96,6 @@ public class Engine {
 
 
 
-    }
-
-    public TETile[][] interactWithInputCheese(String input) {
-        Random RANDOM = null;
-        long SEED = Integer.parseInt(input);
-        RANDOM = new Random(SEED);
-        TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
-        makeRooms(finalWorldFrame, RANDOM);
-        return finalWorldFrame;
     }
 
 
