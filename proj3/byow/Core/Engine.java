@@ -25,6 +25,8 @@ public class Engine {
      * including inputs from the main menu.
      */
     public void interactWithKeyboard() {
+
+        /** main menu*/
         StdDraw.setCanvasSize(WIDTH * 16 , HEIGHT * 16);
         Font font = new Font("Monaco", Font.BOLD, 30);
         Font smallfont = new Font("Monaco", Font.BOLD, 15);
@@ -43,6 +45,32 @@ public class Engine {
         StdDraw.show();
         StdDraw.text(WIDTH / 2,  HEIGHT / 2 - 2, "Quit (Q)");
         StdDraw.show();
+
+        /** array of numbers to identify seed*/
+        List<Character> nums = new ArrayList();
+        for (int i = 0; i <=9; i++) {
+            nums.add((char) i);
+        }
+
+        String seed = "";
+        int count = 0;
+        while (StdDraw.hasNextKeyTyped()) {
+            char letter = StdDraw.nextKeyTyped();
+            if (letter == 'n' || letter == 'N') {
+                StdDraw.clear(Color.BLACK);
+                StdDraw.setPenColor(Color.WHITE);
+                StdDraw.text(WIDTH / 2,  HEIGHT / 2, "Please enter a random seed");
+                StdDraw.show();
+            }
+            else if (nums.contains(letter)) {
+                seed += letter;
+            }
+            else if (letter == 's' || letter == 'S') {
+                break;
+            }
+        }
+
+
 
 
     }
@@ -77,6 +105,9 @@ public class Engine {
         // that works for many different input types.
         Random RANDOM = null;
         String seed = "";
+
+
+        /** array of numbers to identify seed*/
         List<Character> nums = new ArrayList();
         for (int i = 0; i <=9; i++) {
             nums.add((char) i);
