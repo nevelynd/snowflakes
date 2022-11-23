@@ -45,30 +45,33 @@ public class Engine {
         StdDraw.show();
         StdDraw.text(WIDTH / 2,  HEIGHT / 2 - 2, "Quit (Q)");
         StdDraw.show();
+        StdDraw.pause(2000);
 
-        /** array of numbers to identify seed*/
-        List<Character> nums = new ArrayList();
-        for (int i = 0; i <=9; i++) {
-            nums.add((char) i);
-        }
+
 
         String seed = "";
         int count = 0;
         while (StdDraw.hasNextKeyTyped()) {
             char letter = StdDraw.nextKeyTyped();
+            if (letter == 's' || letter == 'S') {
+
+                break;
+            }
             if (letter == 'n' || letter == 'N') {
                 StdDraw.clear(Color.BLACK);
                 StdDraw.setPenColor(Color.WHITE);
                 StdDraw.text(WIDTH / 2,  HEIGHT / 2, "Please enter a random seed");
                 StdDraw.show();
+
             }
-            else if (nums.contains(letter)) {
-                seed += letter;
-            }
-            else if (letter == 's' || letter == 'S') {
-                break;
-            }
+
+            /** need to fix*/
+
+
+            seed += letter;
+
         }
+        interactWithInputString(seed);
 
 
 
@@ -107,16 +110,18 @@ public class Engine {
         String seed = "";
 
 
-        /** array of numbers to identify seed*/
-        List<Character> nums = new ArrayList();
-        for (int i = 0; i <=9; i++) {
-            nums.add((char) i);
-        }
+
+
         for (int i = 0; i < input.length(); i++ ) {
-            if (nums.contains(input.charAt(i))) {
-                seed += input.charAt(i);
-            }
+            if (input.charAt(i) == 'n' || input.charAt(i) == 'N') {
+                continue; }
+            if (input.charAt(i) == 's' || input.charAt(i) == 'S') {
+                break; }
+            seed += input.charAt(i);
+
+
         }
+
 
 
         long SEED = Integer.parseInt(seed);

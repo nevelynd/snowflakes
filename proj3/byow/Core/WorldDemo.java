@@ -24,9 +24,11 @@ public class WorldDemo {
     public static final int ROOM_MAX = 10;
 
     /** Minimum width/height integer for a room.*/
-    public static final int ROOM_MIN = 5;
+    public static final int ROOM_MIN = 6;
     private static final List<Rectangle> rooms = new ArrayList<>();
     public static TETile[][] myWorldDemo;
+
+    //public static final long seed = Engine.;
 
     /** Not entirely sure why I created these.*/
     public static Set<Integer> xs = new HashSet<>();
@@ -52,7 +54,7 @@ public class WorldDemo {
         int room_width;
         int room_height;
         Rectangle ra = null;
-        int maxRooms = random.nextInt(5,25);
+        int maxRooms = random.nextInt(7,25);
 
         for(int i = 0; i < maxRooms; i++) {
             cont:
@@ -112,18 +114,14 @@ public class WorldDemo {
             }
 
         }
-        int minx = Collections.min(pointsx.values());
         int maxx = Collections.max(pointsx.values());
-        int miny = Collections.min(pointsy.values());
         int maxy = Collections.max(pointsy.values());
-
-
+        /** maybe keep track of connected rects and see how to prevent unnecessary hallways*/
 
         for (Rectangle room : rooms) {
             createLinearPath(tiles, points.get(room).x, points.get(room).y, maxx, maxy, random);
 
         }
-
         for (int x = 0; x < WIDTH; x += 1) {
             for (int y = 0; y < HEIGHT; y += 1) {
                 if (tiles[x][y] == Tileset.FLOOR && (tiles[x][y + 1] == Tileset.NOTHING ||tiles[x + 1][y] == Tileset.NOTHING||
@@ -386,7 +384,7 @@ public class WorldDemo {
          * the same world generation! That will be useful later.*/
 
 
-        myWorldDemo = engine.interactWithInputString("831");
+        myWorldDemo = engine.interactWithInputString(args[1]);
         ter.renderFrame(myWorldDemo);
     }
 }

@@ -13,7 +13,7 @@ public class Main {
             Engine engine = new Engine();
             engine.interactWithInputString(args[1]);
             System.out.println(engine.toString());
-        } else {
+        }  else {
             Engine engine = new Engine();
             engine.interactWithKeyboard();
         }
