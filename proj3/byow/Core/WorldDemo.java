@@ -3,6 +3,7 @@ package byow.Core;
 import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
+import edu.princeton.cs.algs4.StdDraw;
 
 import java.awt.*;
 
@@ -26,21 +27,21 @@ public class WorldDemo {
     /** Minimum width/height integer for a room.*/
     public static final int ROOM_MIN = 6;
     private static final List<Rectangle> rooms = new ArrayList<>();
-    public static TETile[][] myWorldDemo;
 
-    //public static final long seed = Engine.;
-
-    /** Not entirely sure why I created these.*/
-    public static Set<Integer> xs = new HashSet<>();
-    public static Set<Integer> ys = new HashSet<>();
-    public static HashMap<Rectangle, Point> points = new HashMap<>();
-
-    public static HashMap<Rectangle, Integer> pointsx = new HashMap<>();
-    public static HashMap<Rectangle, Integer> pointsy = new HashMap<>();
-
-    public static Set<Rectangle> connectedrectangles = new HashSet<>();
 
     public static void makeRooms(TETile[][] tiles, Random random) {
+        TETile[][] myWorldDemo;
+
+        //public static final long seed = Engine.;
+
+        /** Not entirely sure why I created these.*/
+        HashMap<Rectangle, Point> points = new HashMap<>();
+
+        HashMap<Rectangle, Integer> pointsx = new HashMap<>();
+        HashMap<Rectangle, Integer> pointsy = new HashMap<>();
+        Set<Rectangle> connectedrectangles = new HashSet<>();
+
+
         /** Set the background as a series of empty tiles.*/
         for (int x = 0; x < WIDTH; x += 1) {
             for (int y = 0; y < HEIGHT; y += 1) {
@@ -54,6 +55,8 @@ public class WorldDemo {
         int room_width;
         int room_height;
         Rectangle ra = null;
+        Point starting_point = null;
+
         int maxRooms = random.nextInt(7,25);
 
         for(int i = 0; i < maxRooms; i++) {
@@ -96,6 +99,9 @@ public class WorldDemo {
             }
             /** Add valid rectangle to array.*/
             rooms.add(ra);
+            if (starting_point == null || (starting_point.x < ra.x && starting_point.y < ra.y) ) {
+                starting_point = new Point(ra.x + ra.width/2, ra.y - 1);
+            }
             Point p = new Point(ra.x + room_width / 2, ra.y - ra.height / 2);
             points.put(ra, p);
             pointsx.put(ra, p.x);
@@ -116,6 +122,8 @@ public class WorldDemo {
         }
         int maxx = Collections.max(pointsx.values());
         int maxy = Collections.max(pointsy.values());
+        int minx = Collections.min(pointsx.values());
+        int miny = Collections.min(pointsy.values());
         /** maybe keep track of connected rects and see how to prevent unnecessary hallways*/
 
         for (Rectangle room : rooms) {
@@ -131,6 +139,18 @@ public class WorldDemo {
                 }
             }
         }
+
+
+        int posx = starting_point.x;
+        int posy = starting_point.y;
+        TETile initialtile = tiles[posx][posy];
+        tiles[posx][posy] = Tileset.FLOWER;
+       // while (true) {
+
+
+
+        //Rectangle boundingrect = new Rectangle(minx, maxy, abs(maxx-minx), abs(maxy-miny));
+        //System.out.println(boundingrect);
 
         /** using points hashmap with location to possibly find closest rectangle and then create hallway
         List<Rectangle> hallways = new ArrayList<>();
@@ -372,6 +392,8 @@ public class WorldDemo {
 
 
     public static void main(String[] args) {
+        Boolean gameOver = false;
+        TETile[][] myWorldDemo;
 
         TERenderer ter = new TERenderer();
         ter.initialize(WIDTH, HEIGHT);
@@ -384,8 +406,76 @@ public class WorldDemo {
          * the same world generation! That will be useful later.*/
 
 
+
+
+
+        /** need to find way to get player to open spot aka the flower*/
+
+        int posx = 1;
+        int posy = 1;
+
         myWorldDemo = engine.interactWithInputString(args[1]);
-        ter.renderFrame(myWorldDemo);
+        TETile initialtile = myWorldDemo[posx][posy];
+        myWorldDemo[posx][posy] = Tileset.AVATAR;
+
+
+        //StdDraw.text(10, 28,"dont hit the wall");
+        //StdDraw.show();
+
+        while (!gameOver) {
+
+            while (StdDraw.hasNextKeyTyped()) {
+                /** user input for where to move next*/
+                char letter = StdDraw.nextKeyTyped();
+
+                /** previous tile setting before move*/
+                myWorldDemo[posx][posy] = initialtile;
+
+                /** moves avatar up if allowed*/
+                if (letter == 'w' || letter == 'W') {
+                    if (posy+1<=HEIGHT -1 && myWorldDemo[posx][posy + 1] != Tileset.WALL ) {
+                        initialtile = myWorldDemo[posx][posy + 1];
+                        posy = posy + 1;
+                    }
+                }
+
+                /** moves avatar down if allowed*/
+                if (letter == 's' || letter == 'S') {
+                    if (posy-1>=0 && myWorldDemo[posx][posy - 1] != Tileset.WALL ) {
+                        initialtile = myWorldDemo[posx][posy - 1];
+                        posy = posy - 1;
+                    }
+                }
+
+                /** moves avatar left if allowed*/
+                if (letter == 'a' || letter == 'A') {
+                    if (posx-1>=0 && myWorldDemo[posx - 1][posy] != Tileset.WALL ) {
+                        initialtile = myWorldDemo[posx - 1][posy];
+                        posx = posx - 1;
+                    }
+                }
+
+                /** moves avatar right if allowed*/
+                if (letter == 'd' || letter == 'D') {
+
+                    if (posx+1<=WIDTH - 1 && myWorldDemo[posx + 1][posy] != Tileset.WALL ) {
+                        initialtile = myWorldDemo[posx + 1][posy];
+                        posx = posx + 1;
+
+                    }
+
+
+                }
+                myWorldDemo[posx][posy] = Tileset.AVATAR;
+
+
+
+
+            }
+            ter.renderFrame(myWorldDemo);
+
+        }
+
     }
 }
 
