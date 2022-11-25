@@ -43,9 +43,30 @@ public class WorldDemo {
 
 
         /** Set the background as a series of empty tiles.*/
+        Random rr = new Random(123);
+
         for (int x = 0; x < WIDTH; x += 1) {
-            for (int y = 0; y < HEIGHT; y += 1) {
-                tiles[x][y] = Tileset.NOTHING;
+            for (int y = 0; y < HEIGHT ; y += 1) {
+                int worldlayout = rr.nextInt(10);
+                if (y == HEIGHT -1) {
+                    tiles[x][y] = Tileset.NOTHING;
+                } else {
+                    if (worldlayout == 1 || worldlayout == 6 || worldlayout == 9 || worldlayout == 8) {
+                        tiles[x][y] = Tileset.GRASS;
+                    }
+                    if (worldlayout == 2) {
+                        tiles[x][y] = Tileset.MOUNTAIN;
+                    }
+                    if (worldlayout == 3) {
+                        tiles[x][y] = Tileset.TREE;
+                    }
+                    if (worldlayout == 4 || worldlayout == 7) {
+                        tiles[x][y] = Tileset.SAND;
+                    }
+                    if (worldlayout == 5 || worldlayout == 0) {
+                        tiles[x][y] = Tileset.WATER;
+                    }
+                }
             }
         }
 
@@ -67,8 +88,8 @@ public class WorldDemo {
 
                     room_height = random.nextInt(ROOM_MIN, ROOM_MAX + 1);
                     room_width = random.nextInt(ROOM_MIN, ROOM_MAX + 1);
-                    xs = random.nextInt(0, WIDTH + 1);
-                    ys = random.nextInt(0, HEIGHT + 1 - room_height);
+                    xs = random.nextInt(0, WIDTH );
+                    ys = random.nextInt(0, HEIGHT  - room_height);
 
                    // Point p = new Point(xs, ys);
                     /**rectangle takes in point  from  upper left*/
@@ -99,7 +120,7 @@ public class WorldDemo {
             }
             /** Add valid rectangle to array.*/
             rooms.add(ra);
-            if (starting_point == null || (starting_point.x < ra.x && starting_point.y < ra.y) ) {
+            if (starting_point == null || (starting_point.x < ra.x || starting_point.y < ra.y) ) {
                 starting_point = new Point(ra.x + ra.width/2, ra.y - 1);
             }
             Point p = new Point(ra.x + room_width / 2, ra.y - ra.height / 2);
@@ -132,8 +153,10 @@ public class WorldDemo {
         }
         for (int x = 0; x < WIDTH; x += 1) {
             for (int y = 0; y < HEIGHT; y += 1) {
-                if (tiles[x][y] == Tileset.FLOOR && (tiles[x][y + 1] == Tileset.NOTHING ||tiles[x + 1][y] == Tileset.NOTHING||
-                        tiles[x][y - 1] == Tileset.NOTHING||tiles[x - 1][y] == Tileset.NOTHING)) {
+                if (tiles[x][y] == Tileset.FLOOR && ((tiles[x][y + 1] != Tileset.FLOOR && tiles[x][y + 1] != Tileset.WALL)
+                        ||(tiles[x + 1][y] != Tileset.FLOOR && tiles[x + 1][y] != Tileset.WALL) ||
+                        (tiles[x][y - 1] != Tileset.FLOOR && tiles[x][y - 1] != Tileset.WALL) ||
+                        (tiles[x - 1][y] != Tileset.FLOOR && tiles[x - 1][y] != Tileset.WALL))) {
                     tiles[x][y] = Tileset.WALL;
 
                 }
@@ -405,19 +428,40 @@ public class WorldDemo {
          * be of a random size within given parameters. Note that if you put the same seed in, you get
          * the same world generation! That will be useful later.*/
 
+        //StdDraw.setPenColor(Color.WHITE);
+        Font ogfont = new Font("Monaco", Font.BOLD, 14);
+        Font fontmid = new Font("Monaco", Font.BOLD, 50);
+
+
 
 
 
 
         /** need to find way to get player to open spot aka the flower*/
 
-        int posx = 1;
-        int posy = 1;
+        int posx = 25;
+        int posy = 29;
 
         myWorldDemo = engine.interactWithInputString(args[1]);
+
+        String HUD = "";
+        int r = 0;
+        for (char i : HUD.toCharArray()) {
+            TETile I = new TETile(i, Color.white, Color.black,
+                    "i");
+            myWorldDemo[r][29] = I;
+            r+=1;
+        }
+
+
+
+
         TETile initialtile = myWorldDemo[posx][posy];
         myWorldDemo[posx][posy] = Tileset.AVATAR;
-
+        StdDraw.setFont(fontmid);
+        StdDraw.text(30,20, "w");
+        StdDraw.show();
+        StdDraw.setFont(ogfont);
 
         //StdDraw.text(10, 28,"dont hit the wall");
         //StdDraw.show();
@@ -473,6 +517,7 @@ public class WorldDemo {
 
             }
             ter.renderFrame(myWorldDemo);
+
 
         }
 
