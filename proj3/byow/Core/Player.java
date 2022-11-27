@@ -1,7 +1,7 @@
 package byow.Core;
 
 public class Player {
-    public  void createplayer(int r) {
+    public static void createplayer(int health, int playeerx, int playery) {
 
 
     }

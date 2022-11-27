@@ -166,9 +166,10 @@ public class WorldDemo {
 
         int doorx = door.x;
         int doory = door.y;
-        TETile initialtile = tiles[doorx][doory];
         tiles[doorx][doory] = Tileset.FLOWER;
-       // while (true) {
+        TETile initialtile = tiles[doorx][doory];
+        Player.createplayer(5, doorx, doory);
+        // while (true) {
 
 
 
@@ -435,15 +436,16 @@ public class WorldDemo {
 
 
 
+
+
     public static void main(String[] args) {
         Boolean gameOver = false;
-        TETile[][] myWorldDemo;
-
-        TERenderer ter = new TERenderer();
-        ter.initialize(WIDTH, HEIGHT);
+        TETile[][] myWorldDemo = new TETile[WIDTH][HEIGHT];
 
 
-        Engine engine = new Engine();
+
+
+
         /** The number below is the seed. The method can only take in numbers for now. Try changing the seed!
          * The world should generate a random number of rooms between 5 and 25 of many. The rooms should
          * be of a random size within given parameters. Note that if you put the same seed in, you get
@@ -455,10 +457,29 @@ public class WorldDemo {
 
         int posx = 25;
         int posy = 29;
+        String seed = "";
+        String input = args[0];
+        int i;
+
+        for ( i = 0; i < input.length(); i++ ) {
+            if (input.charAt(i) == 'n' || input.charAt(i) == 'N') {
+                continue; }
+            if (input.charAt(i) == 's' || input.charAt(i) == 'S') {
+                break; }
+            seed += input.charAt(i);
+        }
+        String stringmovement = "";
+        for ( int j = i + 1 ;j < input.length(); j++ ) {
+            stringmovement += input.charAt(j);
+        }
+        char[] smarray= stringmovement.toCharArray();
 
 
 
-        myWorldDemo = engine.interactWithInputString(args[1]);
+
+        long SEED = Integer.parseInt(seed);
+        Random RANDOM = new Random(SEED);
+        WorldDemo.makeRooms(myWorldDemo, RANDOM);
 
 
         /**places player somewhere to start*/
@@ -468,43 +489,38 @@ public class WorldDemo {
         /**HUD health bar*/
         int health = 5;
         String HUD = "health:";
+        int sm = 0;
+        if (smarray.length>sm) {
+            while (!gameOver && smarray.length>sm) {
 
-        while (!gameOver) {
-
-            displayHUD(myWorldDemo, HUD, health);
-
-
-            while (StdDraw.hasNextKeyTyped()) {
-
-                /** user input for where to move next*/
-                char letter = StdDraw.nextKeyTyped();
+                char stringletter = smarray[sm];
+                sm+=1;
 
                 /** previous tile setting before move*/
                 myWorldDemo[posx][posy] = initialtile;
 
                 /** quits and saves*/
-                if (letter == ':') {
+                if (stringletter == ':') {
                     StdDraw.pause(1000);
-                    char nextletter = StdDraw.nextKeyTyped();
-                    if ( nextletter == 'Q' || nextletter == 'q') {
+
+                    stringletter = smarray[sm];
+                    if (stringletter == 'Q' || stringletter == 'q') {
                         gameOver = true;
                         LoadandSave.save();
                     }
                 }
 
                 /** moves avatar up if allowed*/
-                if (letter == 'w' || letter == 'W') {
-                    health -=1;
+                if (stringletter == 'w' || stringletter == 'W') {
                     if (posy+1<=HEIGHT -1 && myWorldDemo[posx][posy + 1] != Tileset.WALL ) {
                         initialtile = myWorldDemo[posx][posy + 1];
                         posy = posy + 1;
-
                     }
 
                 }
 
                 /** moves avatar down if allowed*/
-                if (letter == 's' || letter == 'S') {
+                if (stringletter == 's' || stringletter == 'S') {
                     if (posy-1>=0 && myWorldDemo[posx][posy - 1] != Tileset.WALL ) {
                         initialtile = myWorldDemo[posx][posy - 1];
                         posy = posy - 1;
@@ -512,7 +528,7 @@ public class WorldDemo {
                 }
 
                 /** moves avatar left if allowed*/
-                if (letter == 'a' || letter == 'A') {
+                if (stringletter == 'a' || stringletter == 'A') {
                     if (posx-1>=0 && myWorldDemo[posx - 1][posy] != Tileset.WALL ) {
                         initialtile = myWorldDemo[posx - 1][posy];
                         posx = posx - 1;
@@ -520,33 +536,97 @@ public class WorldDemo {
                 }
 
                 /** moves avatar right if allowed*/
-                if (letter == 'd' || letter == 'D') {
-
+                if (stringletter == 'd' || stringletter == 'D') {
                     if (posx+1<=WIDTH - 1 && myWorldDemo[posx + 1][posy] != Tileset.WALL ) {
                         initialtile = myWorldDemo[posx + 1][posy];
                         posx = posx + 1;
-
                     }
 
-
                 }
+
+
                 myWorldDemo[posx][posy] = Tileset.AVATAR;
                 if (health <=0) {
                     gameOver = true;
                 }
 
 
+            }
+        }
+        else {
+            TERenderer ter = new TERenderer();
+            ter.initialize(WIDTH, HEIGHT);
+            while (!gameOver ) {
+                while (StdDraw.hasNextKeyTyped()) {
+                    /** user input for where to move next*/
+                    char letter = StdDraw.nextKeyTyped();
+
+
+                    /** previous tile setting before move*/
+                    myWorldDemo[posx][posy] = initialtile;
+
+                    /** quits and saves*/
+                    if (letter == ':' ) {
+                        StdDraw.pause(1000);
+                        char nextletter = StdDraw.nextKeyTyped();
+                        if ( nextletter == 'Q' || nextletter == 'q' ) {
+                            gameOver = true;
+                            LoadandSave.save();
+                        }
+                    }
+
+                    /** moves avatar up if allowed*/
+                    if (letter == 'w' || letter == 'W' ) {
+                        if (posy+1<=HEIGHT -1 && myWorldDemo[posx][posy + 1] != Tileset.WALL ) {
+                            initialtile = myWorldDemo[posx][posy + 1];
+                            posy = posy + 1;
+                        }
+
+                    }
+
+                    /** moves avatar down if allowed*/
+                    if (letter == 's' || letter == 'S') {
+                        if (posy-1>=0 && myWorldDemo[posx][posy - 1] != Tileset.WALL ) {
+                            initialtile = myWorldDemo[posx][posy - 1];
+                            posy = posy - 1;
+                        }
+                    }
+
+                    /** moves avatar left if allowed*/
+                    if (letter == 'a' || letter == 'A' ) {
+                        if (posx-1>=0 && myWorldDemo[posx - 1][posy] != Tileset.WALL ) {
+                            initialtile = myWorldDemo[posx - 1][posy];
+                            posx = posx - 1;
+                        }
+                    }
+
+                    /** moves avatar right if allowed*/
+                    if (letter == 'd' || letter == 'D' ) {
+                        if (posx+1<=WIDTH - 1 && myWorldDemo[posx + 1][posy] != Tileset.WALL ) {
+                            initialtile = myWorldDemo[posx + 1][posy];
+                            posx = posx + 1;
+                        }
+
+                    }
+
+
+                    myWorldDemo[posx][posy] = Tileset.AVATAR;
+                    if (health <=0) {
+                        gameOver = true;
+                    }
+
+                }
+
+                ter.renderFrame(myWorldDemo);
 
 
             }
-            ter.renderFrame(myWorldDemo);
+            if (gameOver) {
+                    System.exit(0);
+                }
 
 
-        }
-        if (gameOver) {
-            System.exit(0);
-        }
-
+            }
     }
 }
 

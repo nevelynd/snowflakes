@@ -54,7 +54,7 @@ public class Engine {
         while (StdDraw.hasNextKeyTyped()) {
             char letter = StdDraw.nextKeyTyped();
             if (letter == 's' || letter == 'S') {
-
+                seed += letter;
                 break;
             }
             if (letter == 'n' || letter == 'N') {
@@ -62,6 +62,7 @@ public class Engine {
                 StdDraw.setPenColor(Color.WHITE);
                 StdDraw.text(WIDTH / 2,  HEIGHT / 2, "Please enter a random seed");
                 StdDraw.show();
+                StdDraw.pause(2000);
 
             }
 
@@ -69,9 +70,14 @@ public class Engine {
 
 
             seed += letter;
+            StdDraw.pause(1000);
+
 
         }
-        interactWithInputString(seed);
+
+        String[] s = new String[1];
+        s[0]= (seed);
+        WorldDemo.main(s);
 
 
 
@@ -106,28 +112,19 @@ public class Engine {
         //
         // See proj3.byow.InputDemo for a demo of how you can make a nice clean interface
         // that works for many different input types.
-        Random RANDOM = null;
-        String seed = "";
-
-
-
-
-        for (int i = 0; i < input.length(); i++ ) {
-            if (input.charAt(i) == 'n' || input.charAt(i) == 'N') {
-                continue; }
-            if (input.charAt(i) == 's' || input.charAt(i) == 'S') {
-                break; }
-            seed += input.charAt(i);
-
-
-        }
-
-
-
-        long SEED = Integer.parseInt(seed);
-        RANDOM = new Random(SEED);
+        String[] s = new String[1];
+        s[0]= (input);
         TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
-        WorldDemo.makeRooms(finalWorldFrame, RANDOM);
+        WorldDemo.main(s);
+
+
+
+
+
+
+
+
+
         return finalWorldFrame;
 
 
