@@ -76,7 +76,7 @@ public class WorldDemo {
         int room_width;
         int room_height;
         Rectangle ra = null;
-        Point starting_point = null;
+        Point door = null;
 
         int maxRooms = random.nextInt(7,25);
 
@@ -120,8 +120,8 @@ public class WorldDemo {
             }
             /** Add valid rectangle to array.*/
             rooms.add(ra);
-            if (starting_point == null || (starting_point.x < ra.x || starting_point.y < ra.y) ) {
-                starting_point = new Point(ra.x + ra.width/2, ra.y - 1);
+            if (door == null || (door.x < ra.x || door.y < ra.y) ) {
+                door = new Point(ra.x + ra.width/2, ra.y - 1);
             }
             Point p = new Point(ra.x + room_width / 2, ra.y - ra.height / 2);
             points.put(ra, p);
@@ -164,10 +164,10 @@ public class WorldDemo {
         }
 
 
-        int posx = starting_point.x;
-        int posy = starting_point.y;
-        TETile initialtile = tiles[posx][posy];
-        tiles[posx][posy] = Tileset.FLOWER;
+        int doorx = door.x;
+        int doory = door.y;
+        TETile initialtile = tiles[doorx][doory];
+        tiles[doorx][doory] = Tileset.FLOWER;
        // while (true) {
 
 
@@ -407,6 +407,27 @@ public class WorldDemo {
         int pathLength;
         int coinFlip;
     }
+    public static void displayHUD(TETile[][] world, String HUD, int health) {
+        int r = 0;
+        for (char i : HUD.toCharArray()) {
+            TETile I = new TETile(i, Color.white, Color.black,
+                    "i");
+            world[r][29] = I;
+            r+=1;
+        }
+        for (int i = 0; i <=4 ; i++) {
+            if (health>0) {
+                world[r][29] = Tileset.FULLHEART;
+                health -=1;
+
+
+            } else {
+            world[r][29] = Tileset.EMPTYHEART;}
+            r+=1;
+
+        }
+
+    }
 
 
 
@@ -428,13 +449,6 @@ public class WorldDemo {
          * be of a random size within given parameters. Note that if you put the same seed in, you get
          * the same world generation! That will be useful later.*/
 
-        //StdDraw.setPenColor(Color.WHITE);
-        Font ogfont = new Font("Monaco", Font.BOLD, 14);
-        Font fontmid = new Font("Monaco", Font.BOLD, 50);
-
-
-
-
 
 
         /** need to find way to get player to open spot aka the flower*/
@@ -442,45 +456,51 @@ public class WorldDemo {
         int posx = 25;
         int posy = 29;
 
+
+
         myWorldDemo = engine.interactWithInputString(args[1]);
 
-        String HUD = "";
-        int r = 0;
-        for (char i : HUD.toCharArray()) {
-            TETile I = new TETile(i, Color.white, Color.black,
-                    "i");
-            myWorldDemo[r][29] = I;
-            r+=1;
-        }
 
-
-
-
+        /**places player somewhere to start*/
         TETile initialtile = myWorldDemo[posx][posy];
         myWorldDemo[posx][posy] = Tileset.AVATAR;
-        StdDraw.setFont(fontmid);
-        StdDraw.text(30,20, "w");
-        StdDraw.show();
-        StdDraw.setFont(ogfont);
 
-        //StdDraw.text(10, 28,"dont hit the wall");
-        //StdDraw.show();
+        /**HUD health bar*/
+        int health = 5;
+        String HUD = "health:";
 
         while (!gameOver) {
 
+            displayHUD(myWorldDemo, HUD, health);
+
+
             while (StdDraw.hasNextKeyTyped()) {
+
                 /** user input for where to move next*/
                 char letter = StdDraw.nextKeyTyped();
 
                 /** previous tile setting before move*/
                 myWorldDemo[posx][posy] = initialtile;
 
+                /** quits and saves*/
+                if (letter == ':') {
+                    StdDraw.pause(1000);
+                    char nextletter = StdDraw.nextKeyTyped();
+                    if ( nextletter == 'Q' || nextletter == 'q') {
+                        gameOver = true;
+                        LoadandSave.save();
+                    }
+                }
+
                 /** moves avatar up if allowed*/
                 if (letter == 'w' || letter == 'W') {
+                    health -=1;
                     if (posy+1<=HEIGHT -1 && myWorldDemo[posx][posy + 1] != Tileset.WALL ) {
                         initialtile = myWorldDemo[posx][posy + 1];
                         posy = posy + 1;
+
                     }
+
                 }
 
                 /** moves avatar down if allowed*/
@@ -511,6 +531,9 @@ public class WorldDemo {
 
                 }
                 myWorldDemo[posx][posy] = Tileset.AVATAR;
+                if (health <=0) {
+                    gameOver = true;
+                }
 
 
 
@@ -519,6 +542,9 @@ public class WorldDemo {
             ter.renderFrame(myWorldDemo);
 
 
+        }
+        if (gameOver) {
+            System.exit(0);
         }
 
     }
