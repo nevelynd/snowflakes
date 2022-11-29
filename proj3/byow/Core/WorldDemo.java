@@ -18,6 +18,10 @@ import java.util.HashMap;
 
 
 import static java.lang.Math.abs;
+import static java.lang.Math.random;
+
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 
 public class WorldDemo {
     public static final int WIDTH = 80;
@@ -32,7 +36,8 @@ public class WorldDemo {
     public int health;
     public int posx;
     public int posy;
-    Boolean gameOver;
+    public Boolean gameOver;
+    public long randomseed;
 
 
 
@@ -283,8 +288,10 @@ public class WorldDemo {
 
 
 
-    public WorldDemo(Random RANDOM,char[] smarray) {
+    public WorldDemo(long SEED, Random RANDOM,char[] smarray, boolean lpressed) {
+        System.out.println("bleh");
         int loadcount = 0;
+
         TETile[][] myWorldDemo = new TETile[WIDTH][HEIGHT];
         TERenderer ter = new TERenderer();
         ter.initialize(WIDTH, HEIGHT);
@@ -292,30 +299,36 @@ public class WorldDemo {
 
 
         gameOver = false;
-        makeRooms(myWorldDemo, RANDOM);
 
-        if (true) {
+
+        if (!lpressed) {
+            randomseed = SEED;
+            makeRooms(myWorldDemo, RANDOM);
             playersetup(RANDOM, myWorldDemo);
+
+
         }
         else  {
             load();
+            Random r = new Random(randomseed);
+            makeRooms(myWorldDemo, r);
         }
 
-
-
-
-        String HUD = "";
-        displayHUD(myWorldDemo, HUD, health);
 
 
         TETile initialtile = myWorldDemo[posx][posy];
         myWorldDemo[posx][posy] = Tileset.AVATAR;
+        String HUD = "";
+        displayHUD(myWorldDemo, HUD, health);
+
+
+
         int sm = 0;
 
 
 
 
-        if (smarray.length>sm) {
+        if (smarray !=null && smarray.length>sm) {
             while (!gameOver && smarray.length>sm) {
                 char stringletter = smarray[sm];
                 sm+=1;
@@ -332,6 +345,7 @@ public class WorldDemo {
                         gameOver = true;
 
                     }
+                    save();
                 }
 
                 /** moves avatar up if allowed*/
@@ -398,6 +412,8 @@ public class WorldDemo {
                             gameOver = true;
 
                         }
+                        save();
+
                     }
 
                     /** moves avatar up if allowed*/
@@ -456,11 +472,32 @@ public class WorldDemo {
         health = 5;
         posx = RANDOM.nextInt(80);
         posy = RANDOM.nextInt(29);
-        while (myWorldDemo[posx][posy] == Tileset.WALL) {
-            posx = RANDOM.nextInt(80);
-            posy = RANDOM.nextInt(29);
+        //while (myWorldDemo[posx][posy] == Tileset.WALL) {
+        //    posx = RANDOM.nextInt(80);
+        //    posy = RANDOM.nextInt(29);
+
+       // }
+    }
+
+
+    public void save() {
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter("save.txt"));
+            bw.write(""+health);
+            bw.newLine();
+            bw.write(""+posx);
+            bw.newLine();
+            bw.write(""+posy);
+            bw.newLine();
+            bw.write(""+randomseed);
+            bw.close();
+
 
         }
+        catch (Exception e) {
+            System.out.println("please play a game to load first");
+        }
+
     }
 
     public void load() {
@@ -468,7 +505,8 @@ public class WorldDemo {
             BufferedReader games = new BufferedReader(new FileReader("save.txt"));
             health = Integer.parseInt(games.readLine());
             posx = Integer.parseInt(games.readLine());
-            posx = Integer.parseInt(games.readLine());
+            posy = Integer.parseInt(games.readLine());
+            randomseed = Integer.parseInt(games.readLine());
 
         }
         catch (Exception e) {
@@ -487,37 +525,51 @@ public class WorldDemo {
     public static void main(String[] args) {
 
         //TETile[][] myWorldDemo = new TETile[WIDTH][HEIGHT];
-
+        boolean lpressed = false;
         String seed = "";
         String input = args[0];
-        int i;
-
-        for ( i = 0; i < input.length(); i++ ) {
-            if (input.charAt(i) == 'n' || input.charAt(i) == 'N') {
-                continue; }
-            if (input.charAt(i) == 's' || input.charAt(i) == 'S') {
-                break; }
-            seed += input.charAt(i);
+        if (args[0] == "true") {
+            lpressed = true;
+            new WorldDemo(0 , null, null, lpressed);
         }
-        String stringmovement = "";
-        for ( int j = i + 1 ;j < input.length(); j++ ) {
-            stringmovement += input.charAt(j);
+        else {
+            int i;
+
+            for (i = 0; i < input.length(); i++) {
+                if (input.charAt(i) == 'n' || input.charAt(i) == 'N') {
+                    continue;
+                }
+
+                if (input.charAt(i) == 'l' || input.charAt(i) == 'L') {
+                    lpressed = true;
+                    new WorldDemo(0, null , null, lpressed);
+                    break;
+
+                }
+
+                if (input.charAt(i) == ':' && (input.charAt(i + 1) == 'q' || input.charAt(i + 1) == 'Q')) {
+                    System.exit(0);
+                }
+
+                if (input.charAt(i) == 's' || input.charAt(i) == 'S') {
+                    break;
+                }
+                seed += input.charAt(i);
+            }
+            String stringmovement = "";
+            for (int j = i + 1; j < input.length(); j++) {
+                stringmovement += input.charAt(j);
+            }
+            char[] smarray = stringmovement.toCharArray();
+
+
+            long SEED = Integer.parseInt(seed);
+            Random RANDOM = new Random(SEED);
+
+            new WorldDemo(SEED, RANDOM, smarray, lpressed);
+
+
         }
-        char[] smarray= stringmovement.toCharArray();
-
-
-
-
-        long SEED = Integer.parseInt(seed);
-        Random RANDOM = new Random(SEED);
-
-        new WorldDemo(RANDOM , smarray);
-
-
-
-
-
-
 
     }
 }

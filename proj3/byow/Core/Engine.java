@@ -45,15 +45,18 @@ public class Engine {
         StdDraw.show();
         StdDraw.text(WIDTH / 2,  HEIGHT / 2 - 2, "Quit (Q)");
         StdDraw.show();
+
+
+        String[] s = new String[1];
+        s[0] = "false";
         while (!StdDraw.hasNextKeyTyped()) {
         StdDraw.pause(1000);
         }
 
 
-
         String seed = "";
         boolean spressed = false;
-        while (!spressed) {
+        while (!spressed   && s[0] !="true") {
             if (StdDraw.hasNextKeyTyped() ) {
             char letter = StdDraw.nextKeyTyped();
             if (letter == 's' || letter == 'S') {
@@ -68,9 +71,9 @@ public class Engine {
                 StdDraw.pause(2000);
 
             }
-
-            /** need to fix timing*/
-
+            if (letter == 'l' || letter == 'L') {
+                s[0] = "true";
+                }
 
             seed += letter;
             }
@@ -81,8 +84,9 @@ public class Engine {
 
         }
 
-        String[] s = new String[1];
-        s[0]= (seed);
+        if (s[0] != "true") {
+            s[0]= (seed);
+        }
         WorldDemo.main(s);
 
 
