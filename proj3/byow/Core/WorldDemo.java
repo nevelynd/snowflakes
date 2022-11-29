@@ -8,6 +8,8 @@ import edu.princeton.cs.algs4.StdDraw;
 import java.awt.*;
 
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.util.*;
 import java.util.List;
 
@@ -281,21 +283,8 @@ public class WorldDemo {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     public WorldDemo(Random RANDOM,char[] smarray) {
+        int loadcount = 0;
         TETile[][] myWorldDemo = new TETile[WIDTH][HEIGHT];
         TERenderer ter = new TERenderer();
         ter.initialize(WIDTH, HEIGHT);
@@ -303,18 +292,21 @@ public class WorldDemo {
 
 
         gameOver = false;
-        health = 5;
-
         makeRooms(myWorldDemo, RANDOM);
+
+        if (true) {
+            playersetup(RANDOM, myWorldDemo);
+        }
+        else  {
+            load();
+        }
+
+
+
+
         String HUD = "";
         displayHUD(myWorldDemo, HUD, health);
-        posx = RANDOM.nextInt(80);
-        posy = RANDOM.nextInt(29);
-        while (myWorldDemo[posx][posy] == Tileset.WALL) {
-            posx = RANDOM.nextInt(80);
-            posy = RANDOM.nextInt(29);
 
-        }
 
         TETile initialtile = myWorldDemo[posx][posy];
         myWorldDemo[posx][posy] = Tileset.AVATAR;
@@ -338,7 +330,7 @@ public class WorldDemo {
                     stringletter = smarray[sm];
                     if (stringletter == 'Q' || stringletter == 'q') {
                         gameOver = true;
-                        LoadandSave.save();
+
                     }
                 }
 
@@ -404,7 +396,7 @@ public class WorldDemo {
                         char nextletter = StdDraw.nextKeyTyped();
                         if (nextletter == 'Q' || nextletter == 'q') {
                             gameOver = true;
-                            LoadandSave.save();
+
                         }
                     }
 
@@ -460,7 +452,30 @@ public class WorldDemo {
         }
         }
 
+    public void playersetup(Random RANDOM, TETile[][] myWorldDemo) {
+        health = 5;
+        posx = RANDOM.nextInt(80);
+        posy = RANDOM.nextInt(29);
+        while (myWorldDemo[posx][posy] == Tileset.WALL) {
+            posx = RANDOM.nextInt(80);
+            posy = RANDOM.nextInt(29);
 
+        }
+    }
+
+    public void load() {
+        try {
+            BufferedReader games = new BufferedReader(new FileReader("save.txt"));
+            health = Integer.parseInt(games.readLine());
+            posx = Integer.parseInt(games.readLine());
+            posx = Integer.parseInt(games.readLine());
+
+        }
+        catch (Exception e) {
+            System.out.println("please play a game to load first");
+        }
+
+    }
 
 
 
