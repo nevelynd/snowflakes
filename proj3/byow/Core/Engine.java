@@ -45,13 +45,16 @@ public class Engine {
         StdDraw.show();
         StdDraw.text(WIDTH / 2,  HEIGHT / 2 - 2, "Quit (Q)");
         StdDraw.show();
-        StdDraw.pause(2000);
+        while (!StdDraw.hasNextKeyTyped()) {
+        StdDraw.pause(1000);
+        }
 
 
 
         String seed = "";
-        int count = 0;
-        while (StdDraw.hasNextKeyTyped()) {
+        boolean spressed = false;
+        while (!spressed) {
+            if (StdDraw.hasNextKeyTyped() ) {
             char letter = StdDraw.nextKeyTyped();
             if (letter == 's' || letter == 'S') {
                 seed += letter;
@@ -66,11 +69,14 @@ public class Engine {
 
             }
 
-            /** need to fix*/
+            /** need to fix timing*/
 
 
             seed += letter;
-            StdDraw.pause(1000);
+            }
+            else {
+                StdDraw.pause(1000);
+            }
 
 
         }
@@ -116,15 +122,6 @@ public class Engine {
         s[0]= (input);
         TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
         WorldDemo.main(s);
-
-
-
-
-
-
-
-
-
         return finalWorldFrame;
 
 

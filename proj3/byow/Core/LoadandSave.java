@@ -14,10 +14,10 @@ public class LoadandSave {
     }
     public static void save() {
         try {
-            ObjectOutputStream games = new ObjectOutputStream(new FileOutputStream(new File("save.dat")));
+            ObjectOutputStream games = new ObjectOutputStream(new FileOutputStream(new File("save.txt")));
             Data ds = new Data();
             ds.health = 0 ;
-            ds.score = 0;
+            //ds.score = 0;
             ds.playerx = 0;
             ds.playery = 0;
             games.writeObject(ds);
@@ -29,12 +29,13 @@ public class LoadandSave {
 
     }
 
+
     public static void load() {
         try {
-            ObjectInputStream loadgames = new ObjectInputStream(new FileInputStream(new File("save.dat")));
+            ObjectInputStream loadgames = new ObjectInputStream(new FileInputStream(new File("save.txt")));
             Data ds = (Data) loadgames.readObject();
             ds.health = 0;
-            ds.score = 0;
+            //ds.score = 0;
             ds.playerx = 0;
             ds.playery = 0;
 
