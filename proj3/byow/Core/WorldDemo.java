@@ -38,6 +38,7 @@ public class WorldDemo {
     public int posy;
     public Boolean gameOver;
     public long randomseed;
+    public String avatar;
 
 
 
@@ -90,7 +91,7 @@ public class WorldDemo {
         Rectangle ra = null;
         Point door = null;
 
-        int maxRooms = random.nextInt(7,25);
+        int maxRooms = random.nextInt(7,15);
 
         for(int i = 0; i < maxRooms; i++) {
             cont:
@@ -139,7 +140,6 @@ public class WorldDemo {
             points.put(ra, p);
             pointsx.put(ra, p.x);
             pointsy.put(ra, p.y);
-            //System.out.println(rooms);
 
             /** Generate tiles */
             for (int x = xs; x < room_width + xs; x += 1) {
@@ -178,8 +178,8 @@ public class WorldDemo {
 
         int doorx = door.x;
         int doory = door.y;
-        tiles[doorx][doory] = Tileset.FLOWER;
-        TETile initialtile = tiles[doorx][doory];
+        //tiles[doorx][doory] = Tileset.FLOWER;
+        //TETile initialtile = tiles[doorx][doory];
         //Player.createplayer(5, doorx, doory);
 
 
@@ -289,12 +289,9 @@ public class WorldDemo {
 
 
     public WorldDemo(long SEED, Random RANDOM,char[] smarray, boolean lpressed) {
-        System.out.println("bleh");
-        int loadcount = 0;
 
         TETile[][] myWorldDemo = new TETile[WIDTH][HEIGHT];
-        TERenderer ter = new TERenderer();
-        ter.initialize(WIDTH, HEIGHT);
+
 
 
 
@@ -302,9 +299,12 @@ public class WorldDemo {
 
 
         if (!lpressed) {
+
             randomseed = SEED;
             makeRooms(myWorldDemo, RANDOM);
+
             playersetup(RANDOM, myWorldDemo);
+
 
 
         }
@@ -312,6 +312,9 @@ public class WorldDemo {
             load();
             Random r = new Random(randomseed);
             makeRooms(myWorldDemo, r);
+
+
+
         }
 
 
@@ -329,7 +332,11 @@ public class WorldDemo {
 
 
         if (smarray !=null && smarray.length>sm) {
+            TERenderer ter = new TERenderer();
+            ter.initialize(WIDTH, HEIGHT);
+            ter.renderFrame(myWorldDemo);
             while (!gameOver && smarray.length>sm) {
+
                 char stringletter = smarray[sm];
                 sm+=1;
 
@@ -338,7 +345,6 @@ public class WorldDemo {
 
                 /** quits and saves*/
                 if (stringletter == ':') {
-                    StdDraw.pause(1000);
 
                     stringletter = smarray[sm];
                     if (stringletter == 'Q' || stringletter == 'q') {
@@ -388,14 +394,20 @@ public class WorldDemo {
                     gameOver = true;
                 }
 
+                ter.renderFrame(myWorldDemo);
+
+
             }
             if (gameOver) {
                 System.exit(0);
             }
         }
         else {
+            TERenderer ter = new TERenderer();
+            ter.initialize(WIDTH, HEIGHT);
             while (!gameOver) {
                 ter.renderFrame(myWorldDemo);
+
                 while (StdDraw.hasNextKeyTyped()) {
                     /** user input for where to move next*/
                     char letter = StdDraw.nextKeyTyped();
@@ -406,7 +418,8 @@ public class WorldDemo {
 
                     /** quits and saves*/
                     if (letter == ':') {
-                        StdDraw.pause(1000);
+                        while (!StdDraw.hasNextKeyTyped()) {
+                            StdDraw.pause(1000); }
                         char nextletter = StdDraw.nextKeyTyped();
                         if (nextletter == 'Q' || nextletter == 'q') {
                             gameOver = true;
@@ -443,6 +456,7 @@ public class WorldDemo {
 
                     /** moves avatar right if allowed*/
                     if (letter == 'd' || letter == 'D') {
+
                         if (posx + 1 <= WIDTH - 1 && myWorldDemo[posx + 1][posy] != Tileset.WALL) {
                             initialtile = myWorldDemo[posx + 1][posy];
                             posx = posx + 1;
@@ -472,11 +486,11 @@ public class WorldDemo {
         health = 5;
         posx = RANDOM.nextInt(80);
         posy = RANDOM.nextInt(29);
-        //while (myWorldDemo[posx][posy] == Tileset.WALL) {
-        //    posx = RANDOM.nextInt(80);
-        //    posy = RANDOM.nextInt(29);
+        while (myWorldDemo[posx][posy] != Tileset.FLOOR) {
+            posx = RANDOM.nextInt(80);
+            posy = RANDOM.nextInt(29);
 
-       // }
+        }
     }
 
 
@@ -528,6 +542,9 @@ public class WorldDemo {
         boolean lpressed = false;
         String seed = "";
         String input = args[0];
+        long SEED = 0;
+        Random RANDOM = null;
+        char[] smarray = null;
         if (args[0] == "true") {
             lpressed = true;
             new WorldDemo(0 , null, null, lpressed);
@@ -542,7 +559,6 @@ public class WorldDemo {
 
                 if (input.charAt(i) == 'l' || input.charAt(i) == 'L') {
                     lpressed = true;
-                    new WorldDemo(0, null , null, lpressed);
                     break;
 
                 }
@@ -556,16 +572,16 @@ public class WorldDemo {
                 }
                 seed += input.charAt(i);
             }
-            String stringmovement = "";
-            for (int j = i + 1; j < input.length(); j++) {
-                stringmovement += input.charAt(j);
-            }
-            char[] smarray = stringmovement.toCharArray();
 
+                String stringmovement = "";
+                for (int j = i + 1; j < input.length(); j++) {
+                    stringmovement += input.charAt(j);
+                }
+                smarray = stringmovement.toCharArray();
 
-            long SEED = Integer.parseInt(seed);
-            Random RANDOM = new Random(SEED);
-
+                if (!lpressed) {
+                SEED = Integer.parseInt(seed);
+                RANDOM = new Random(SEED); }
             new WorldDemo(SEED, RANDOM, smarray, lpressed);
 
 

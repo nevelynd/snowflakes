@@ -37,6 +37,21 @@ public class Tileset {
     public static final TETile EMPTYHEART = new TETile('♥', Color.white, Color.black, "emptyheart");
 
 
+    /**features for avatar options?*/
+
+    public static final TETile curlyheart = new TETile('ღ', Color.white, Color.black, "curlyheart");
+    public static final TETile star = new TETile('✶', Color.white, Color.black, "star");
+
+    public static final TETile smiley = new TETile('ツ', Color.white, Color.black, "smiley");
+    public static final TETile crown = new TETile('♕', Color.white, Color.black, "crown");
+    public static final TETile yinyang = new TETile('☯', Color.white, Color.black, "yinyang");
+
+
+
+
+
+
+
 
 }
 

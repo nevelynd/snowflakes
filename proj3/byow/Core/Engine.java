@@ -27,28 +27,15 @@ public class Engine {
     public void interactWithKeyboard() {
 
         /** main menu*/
-        StdDraw.setCanvasSize(WIDTH * 16 , HEIGHT * 16);
-        Font font = new Font("Monaco", Font.BOLD, 30);
-        Font smallfont = new Font("Monaco", Font.BOLD, 15);
-        StdDraw.setFont(font);
-        StdDraw.setXscale(0, WIDTH);
-        StdDraw.setYscale(0, HEIGHT);
-        StdDraw.clear(Color.BLACK);
-        StdDraw.enableDoubleBuffering();
-        StdDraw.setPenColor(Color.WHITE);
-        StdDraw.text(WIDTH / 2, 4* HEIGHT / 5, "CS61B: THE GAME");
-        StdDraw.show();
-        StdDraw.setFont(smallfont);
-        StdDraw.text(WIDTH / 2, HEIGHT / 2, "Load Game (L)");
-        StdDraw.show();
-        StdDraw.text(WIDTH / 2,  HEIGHT / 2 + 2, "New Game (N)");
-        StdDraw.show();
-        StdDraw.text(WIDTH / 2,  HEIGHT / 2 - 2, "Quit (Q)");
-        StdDraw.show();
+        mainmenu();
+
 
 
         String[] s = new String[1];
         s[0] = "false";
+
+
+
         while (!StdDraw.hasNextKeyTyped()) {
         StdDraw.pause(1000);
         }
@@ -58,9 +45,15 @@ public class Engine {
         boolean spressed = false;
         while (!spressed   && s[0] !="true") {
             if (StdDraw.hasNextKeyTyped() ) {
+
             char letter = StdDraw.nextKeyTyped();
+            if (letter == 'c' || letter == 'C') {
+                changeavatar();
+
+
+            }
+
             if (letter == 's' || letter == 'S') {
-                seed += letter;
                 break;
             }
             if (letter == 'n' || letter == 'N') {
@@ -68,7 +61,6 @@ public class Engine {
                 StdDraw.setPenColor(Color.WHITE);
                 StdDraw.text(WIDTH / 2,  HEIGHT / 2, "Please enter a random seed");
                 StdDraw.show();
-                StdDraw.pause(2000);
 
             }
             if (letter == 'l' || letter == 'L') {
@@ -77,9 +69,7 @@ public class Engine {
 
             seed += letter;
             }
-            else {
-                StdDraw.pause(1000);
-            }
+
 
 
         }
@@ -93,6 +83,82 @@ public class Engine {
 
 
     }
+
+    public void mainmenu() {
+        StdDraw.setCanvasSize(WIDTH * 16 , HEIGHT * 16);
+        Font font = new Font("Monaco", Font.BOLD, 30);
+        Font smallfont = new Font("Monaco", Font.BOLD, 15);
+        StdDraw.setFont(font);
+        StdDraw.setXscale(0, WIDTH);
+        StdDraw.setYscale(0, HEIGHT);
+        StdDraw.clear(Color.BLACK);
+        StdDraw.enableDoubleBuffering();
+        StdDraw.setPenColor(Color.WHITE);
+        StdDraw.text(WIDTH / 2, 4* HEIGHT / 5, "CS61B: THE GAME");
+        StdDraw.show();
+        StdDraw.setFont(smallfont);
+        StdDraw.text(WIDTH / 2, HEIGHT / 2 + 2, "Load Game (L)");
+        StdDraw.show();
+        StdDraw.text(WIDTH / 2,  HEIGHT / 2 + 1, "New Game (N)");
+        StdDraw.show();
+        StdDraw.text(WIDTH / 2,  HEIGHT / 2 , "Quit (Q)");
+        StdDraw.show();
+        StdDraw.text(WIDTH / 2,  HEIGHT / 2 - 1, "Change Avatar (C)");
+        StdDraw.show();
+    }
+    public void changeavatar() {
+        boolean bpressed = false;
+        StdDraw.setCanvasSize(WIDTH * 16 , HEIGHT * 16);
+        Font font = new Font("Monaco", Font.BOLD, 20);
+        StdDraw.setFont(font);
+        StdDraw.setXscale(0, WIDTH);
+        StdDraw.setYscale(0, HEIGHT);
+        StdDraw.clear(Color.BLACK);
+        StdDraw.enableDoubleBuffering();
+        StdDraw.setPenColor(Color.WHITE);
+
+        StdDraw.text(WIDTH / 2, HEIGHT / 2 + 4, "(1) ღ curly heart ღ");
+        StdDraw.show();
+        StdDraw.text(WIDTH / 2, HEIGHT / 2 + 2, "(2) ✶ star ✶");
+        StdDraw.show();
+        StdDraw.text(WIDTH / 2, HEIGHT / 2 , "(3) ツ smiley ツ");
+        StdDraw.show();
+        StdDraw.text(WIDTH / 2, HEIGHT / 2 - 2, "(4) ♕ crown ♕");
+        StdDraw.show();
+        StdDraw.text(WIDTH / 2, HEIGHT / 2 - 4, "(5) ☯ yinyang ☯");
+        StdDraw.show();
+        StdDraw.text(WIDTH / 2, 2, "Back (B)");
+        StdDraw.show();
+        while (!bpressed) {
+            if (StdDraw.hasNextKeyTyped()) {
+                char letter = StdDraw.nextKeyTyped();
+                if (letter == 'b' || letter == 'B') {
+                    bpressed = true;
+
+                }
+                if (letter == '1') {
+
+                }
+                if (letter == '2') {
+
+                }
+                if (letter == '3') {
+
+                }
+                if (letter == '4') {
+
+                }
+                if (letter == '5') {
+
+                }
+
+            }
+        }
+
+    }
+
+
+
 
     /**
      * Method used for autograding and testing your code. The input string will be a series
@@ -126,6 +192,7 @@ public class Engine {
         s[0]= (input);
         TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
         WorldDemo.main(s);
+
         return finalWorldFrame;
 
 
