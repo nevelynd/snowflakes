@@ -38,7 +38,6 @@ public class WorldDemo {
     public int posy;
     public Boolean gameOver;
     public long randomseed;
-    public String avatar;
 
 
 
@@ -288,7 +287,7 @@ public class WorldDemo {
 
 
 
-    public WorldDemo(long SEED, Random RANDOM,char[] smarray, boolean lpressed) {
+    public WorldDemo(long SEED, Random RANDOM,char[] smarray, boolean lpressed, int avatar) {
 
         TETile[][] myWorldDemo = new TETile[WIDTH][HEIGHT];
 
@@ -320,7 +319,35 @@ public class WorldDemo {
 
 
         TETile initialtile = myWorldDemo[posx][posy];
-        myWorldDemo[posx][posy] = Tileset.AVATAR;
+        TETile player = Tileset.AVATAR;
+        if (avatar == 1) {
+            player = Tileset.curlyheart;
+
+        }
+        if (avatar == 2) {
+            player = Tileset.star;
+
+
+        }
+        if (avatar == 3) {
+            player = Tileset.smiley;
+
+
+        }
+
+        if (avatar == 4) {
+            player = Tileset.crown;
+
+
+        }
+        if (avatar == 5) {
+            player = Tileset.yinyang;
+
+
+        }
+
+        myWorldDemo[posx][posy] = player;
+
         String HUD = "";
         displayHUD(myWorldDemo, HUD, health);
 
@@ -389,7 +416,7 @@ public class WorldDemo {
                 }
 
 
-                myWorldDemo[posx][posy] = Tileset.AVATAR;
+                myWorldDemo[posx][posy] = player;
                 if (health <=0) {
                     gameOver = true;
                 }
@@ -465,7 +492,7 @@ public class WorldDemo {
                     }
 
 
-                    myWorldDemo[posx][posy] = Tileset.AVATAR;
+                    myWorldDemo[posx][posy] = player;
                     if (health <= 0) {
                         gameOver = true;
                     }
@@ -540,6 +567,7 @@ public class WorldDemo {
 
         //TETile[][] myWorldDemo = new TETile[WIDTH][HEIGHT];
         boolean lpressed = false;
+        int avatar = Integer.parseInt(args[1]);
         String seed = "";
         String input = args[0];
         long SEED = 0;
@@ -547,7 +575,7 @@ public class WorldDemo {
         char[] smarray = null;
         if (args[0] == "true") {
             lpressed = true;
-            new WorldDemo(0 , null, null, lpressed);
+            new WorldDemo(0 , null, null, lpressed, avatar);
         }
         else {
             int i;
@@ -582,7 +610,7 @@ public class WorldDemo {
                 if (!lpressed) {
                 SEED = Integer.parseInt(seed);
                 RANDOM = new Random(SEED); }
-            new WorldDemo(SEED, RANDOM, smarray, lpressed);
+            new WorldDemo(SEED, RANDOM, smarray, lpressed, avatar);
 
 
         }

@@ -5,15 +5,7 @@ import byow.TileEngine.TETile;
 import edu.princeton.cs.introcs.StdDraw;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Random;
-
-
-import java.util.Random;
-
-import static byow.Core.WorldDemo.makeRooms;
-import java.util.List;
-
+import java.time.temporal.ValueRange;
 public class Engine {
     TERenderer ter = new TERenderer();
     /* Feel free to change the width and height. */
@@ -28,11 +20,14 @@ public class Engine {
 
         /** main menu*/
         mainmenu();
+        int avatar = 0;
+        boolean seedstart = false;
 
 
 
-        String[] s = new String[1];
+        String[] s = new String[2];
         s[0] = "false";
+
 
 
 
@@ -48,7 +43,8 @@ public class Engine {
 
             char letter = StdDraw.nextKeyTyped();
             if (letter == 'c' || letter == 'C') {
-                changeavatar();
+                avatar = changeavatar();
+                mainmenu();
 
 
             }
@@ -61,13 +57,14 @@ public class Engine {
                 StdDraw.setPenColor(Color.WHITE);
                 StdDraw.text(WIDTH / 2,  HEIGHT / 2, "Please enter a random seed");
                 StdDraw.show();
+                seedstart = true;
 
             }
             if (letter == 'l' || letter == 'L') {
                 s[0] = "true";
                 }
-
-            seed += letter;
+            if (seedstart) {
+            seed += letter; }
             }
 
 
@@ -77,6 +74,7 @@ public class Engine {
         if (s[0] != "true") {
             s[0]= (seed);
         }
+        s[1] = String.valueOf(avatar);
         WorldDemo.main(s);
 
 
@@ -97,25 +95,31 @@ public class Engine {
         StdDraw.text(WIDTH / 2, 4* HEIGHT / 5, "CS61B: THE GAME");
         StdDraw.show();
         StdDraw.setFont(smallfont);
-        StdDraw.text(WIDTH / 2, HEIGHT / 2 + 2, "Load Game (L)");
+        StdDraw.text(WIDTH / 2,  HEIGHT / 2 + 2, "New Game (N)");
         StdDraw.show();
-        StdDraw.text(WIDTH / 2,  HEIGHT / 2 + 1, "New Game (N)");
+        StdDraw.text(WIDTH / 2, HEIGHT / 2 + 1, "Load Game (L)");
         StdDraw.show();
         StdDraw.text(WIDTH / 2,  HEIGHT / 2 , "Quit (Q)");
         StdDraw.show();
         StdDraw.text(WIDTH / 2,  HEIGHT / 2 - 1, "Change Avatar (C)");
         StdDraw.show();
     }
-    public void changeavatar() {
+    public int changeavatar() {
         boolean bpressed = false;
+        int selected = 0;
         StdDraw.setCanvasSize(WIDTH * 16 , HEIGHT * 16);
         Font font = new Font("Monaco", Font.BOLD, 20);
         StdDraw.setFont(font);
         StdDraw.setXscale(0, WIDTH);
         StdDraw.setYscale(0, HEIGHT);
-        StdDraw.clear(Color.BLACK);
         StdDraw.enableDoubleBuffering();
+        StdDraw.clear(Color.BLACK);
         StdDraw.setPenColor(Color.WHITE);
+
+        StdDraw.text(WIDTH / 2, HEIGHT / 2 + 12, "current avatar:");
+        StdDraw.show();
+        StdDraw.text(WIDTH / 2, HEIGHT / 2 + 10, "@");
+        StdDraw.show();
 
         StdDraw.text(WIDTH / 2, HEIGHT / 2 + 4, "(1) ღ curly heart ღ");
         StdDraw.show();
@@ -129,33 +133,67 @@ public class Engine {
         StdDraw.show();
         StdDraw.text(WIDTH / 2, 2, "Back (B)");
         StdDraw.show();
+
+
+
         while (!bpressed) {
-            if (StdDraw.hasNextKeyTyped()) {
+            if (StdDraw.hasNextKeyTyped() ) {
+
                 char letter = StdDraw.nextKeyTyped();
+
                 if (letter == 'b' || letter == 'B') {
                     bpressed = true;
+                    break;
 
                 }
+                selected = Integer.parseInt(String.valueOf(letter));
+                StdDraw.setPenColor(Color.BLACK);
+                StdDraw.filledRectangle(WIDTH / 2, HEIGHT / 2 + 10, 2, 1);
+                StdDraw.setPenColor(Color.WHITE);
+
                 if (letter == '1') {
+
+
+
+                    StdDraw.text(WIDTH / 2, HEIGHT / 2 + 10, "ღ");
+
+
 
                 }
                 if (letter == '2') {
 
+                    StdDraw.text(WIDTH / 2, HEIGHT / 2 + 10, "✶");
+
+
                 }
                 if (letter == '3') {
+
+                    StdDraw.text(WIDTH / 2, HEIGHT / 2 + 10, "ツ");
+
 
                 }
                 if (letter == '4') {
 
+                    StdDraw.text(WIDTH / 2, HEIGHT / 2 + 10, "♕");
+
+
                 }
                 if (letter == '5') {
 
+                    StdDraw.text(WIDTH / 2, HEIGHT / 2 + 10, "☯");
+
                 }
+                StdDraw.show();
+
+
 
             }
         }
-
+        return selected;
     }
+
+
+
 
 
 
@@ -188,8 +226,47 @@ public class Engine {
         //
         // See proj3.byow.InputDemo for a demo of how you can make a nice clean interface
         // that works for many different input types.
-        String[] s = new String[1];
-        s[0]= (input);
+        String[] s = new String[2];
+        ValueRange vr = ValueRange.of(0, 6);
+        boolean bpressed = false;
+        String newinput = "";
+        int i = 1;
+        s[0] = (input);
+        s[1] = String.valueOf(0);
+//"c4bc2blwwd:q"
+        //"c12b5bn123ssddwsa:q"
+        if (input.charAt(0) == 'c' || input.charAt(0) == 'C') {
+            for (i = 1; i < input.length(); i++) {
+                if (vr.isValidIntValue(input.charAt(i))) {
+                    s[1] = String.valueOf(input.charAt(i));
+                }
+                if (input.charAt(i) =='B' ||input.charAt(i) =='b') {
+                    if (input.length() > i+1 && (input.charAt(i+1) == 'c' || input.charAt(1+i) == 'C') ){
+                        continue;
+                    }
+                    else {
+                        break;
+                    }
+                }
+
+
+            }
+            for (int j = i + 1; j < input.length(); j++) {
+                newinput += input.charAt(j);
+
+
+
+            }
+            s[0] = newinput;
+
+
+
+        }
+
+
+
+
+
         TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
         WorldDemo.main(s);
 
