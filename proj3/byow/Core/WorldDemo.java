@@ -38,6 +38,7 @@ public class WorldDemo {
     public int posy;
     public Boolean gameOver;
     public long randomseed;
+    public int avatar;
 
 
 
@@ -106,8 +107,13 @@ public class WorldDemo {
                    // Point p = new Point(xs, ys);
                     /**rectangle takes in point  from  upper left*/
                     ra = new Rectangle(xs, ys + room_height, room_width, room_height);
+
                     /** If the rectangle intersects with another rectangle within our known list, then
                      * we must generate a new rectangle.*/
+                    if (ra.x + room_width > WIDTH   || ra.y  > HEIGHT - 1) {
+                        continue ;
+                    }
+
                     for (Rectangle rb : rooms) {
                         /** If the room that is about to be created does not meet the specified requirements,
                          * then we cycle through the while statement again. Thus, generating a new room.
@@ -121,10 +127,11 @@ public class WorldDemo {
                                 //|| rb.contains(ra.x, ra.y) || rb.contains(ra.x + ra.width, ra.y) || ra.contains(rb.x, rb.y) || ra.contains(rb.x + rb.width, rb.y)
                                 //|| rb.contains(ra.x, ra.y - ra.height) || rb.contains(ra.x + ra.width, ra.y - ra.height) || ra.contains(rb.x, rb.y - rb.height) || ra.contains(rb.x + rb.width, rb.y - rb.height)
 
-                                || ra.x + ra.width >= WIDTH   || ra.y  >= HEIGHT ) {
+                                 ) {
                             continue cont;
                         }
                     }
+
 
 
 
@@ -303,19 +310,23 @@ public class WorldDemo {
             makeRooms(myWorldDemo, RANDOM);
 
             playersetup(RANDOM, myWorldDemo);
+            this.avatar = avatar;
+
 
 
 
         }
         else  {
             load();
+
             Random r = new Random(randomseed);
             makeRooms(myWorldDemo, r);
+            avatar = this.avatar;
+
 
 
 
         }
-
 
 
         TETile initialtile = myWorldDemo[posx][posy];
@@ -531,6 +542,8 @@ public class WorldDemo {
             bw.write(""+posy);
             bw.newLine();
             bw.write(""+randomseed);
+            bw.newLine();
+            bw.write(""+avatar);
             bw.close();
 
 
@@ -548,6 +561,7 @@ public class WorldDemo {
             posx = Integer.parseInt(games.readLine());
             posy = Integer.parseInt(games.readLine());
             randomseed = Integer.parseInt(games.readLine());
+            avatar = Integer.parseInt(games.readLine());
 
         }
         catch (Exception e) {

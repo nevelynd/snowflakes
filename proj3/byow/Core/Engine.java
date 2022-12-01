@@ -118,8 +118,7 @@ public class Engine {
 
         StdDraw.text(WIDTH / 2, HEIGHT / 2 + 12, "current avatar:");
         StdDraw.show();
-        StdDraw.text(WIDTH / 2, HEIGHT / 2 + 10, "@");
-        StdDraw.show();
+
 
         StdDraw.text(WIDTH / 2, HEIGHT / 2 + 4, "(1) ღ curly heart ღ");
         StdDraw.show();
@@ -228,16 +227,16 @@ public class Engine {
         // that works for many different input types.
         String[] s = new String[2];
         ValueRange vr = ValueRange.of(0, 6);
-        boolean bpressed = false;
         String newinput = "";
-        int i = 1;
+        int i ;
         s[0] = (input);
         s[1] = String.valueOf(0);
-//"c4bc2blwwd:q"
         //"c12b5bn123ssddwsa:q"
+
+        //"c4bc2blwwd:q"
         if (input.charAt(0) == 'c' || input.charAt(0) == 'C') {
             for (i = 1; i < input.length(); i++) {
-                if (vr.isValidIntValue(input.charAt(i))) {
+                if (input.charAt(i) =='1' ||input.charAt(i) =='2' || input.charAt(i) =='3' ||input.charAt(i) =='4' ||input.charAt(i) =='5') {
                     s[1] = String.valueOf(input.charAt(i));
                 }
                 if (input.charAt(i) =='B' ||input.charAt(i) =='b') {
