@@ -35,6 +35,8 @@ public class Tileset {
     public static final TETile TREE = new TETile('♠', Color.green, Color.black, "tree");
     public static final TETile FULLHEART = new TETile('♥', Color.red, Color.black, "fullheart");
     public static final TETile EMPTYHEART = new TETile('♥', Color.white, Color.black, "emptyheart");
+    public static final TETile SNOWFLAKE = new TETile('❅', Color.cyan, Color.black, "snowflake");
+
 
 
     /**features for avatar options?*/

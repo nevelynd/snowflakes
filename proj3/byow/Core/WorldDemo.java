@@ -33,12 +33,14 @@ public class WorldDemo {
     /** Minimum width/height integer for a room.*/
     public static final int ROOM_MIN = 6;
     private static final List<Rectangle> rooms = new ArrayList<>();
-    public int health;
+    //public int health;
     public int posx;
     public int posy;
     public Boolean gameOver;
     public long randomseed;
     public int avatar;
+    int numofsnowflakes;
+
 
 
 
@@ -163,10 +165,7 @@ public class WorldDemo {
             }
 
         }
-        int maxx = Collections.max(pointsx.values());
-        int maxy = Collections.max(pointsy.values());
-        int minx = Collections.min(pointsx.values());
-        int miny = Collections.min(pointsy.values());
+
         //Rectangle bound = new Rectangle(minx, maxy, maxx - minx, maxy - miny );
         for (int r = 0; r<rooms.size() ; r++) {
             Rectangle rrr = rooms.get(r);
@@ -335,7 +334,26 @@ public class WorldDemo {
 
     }
 
+    public void randomizedsnow(TETile[][] tiles, Random r) {
 
+
+        for (int i = 0; i < numofsnowflakes; i++) {
+
+            int x = r.nextInt(WIDTH);
+            int y = r.nextInt(HEIGHT);
+            while (tiles[x][y] != Tileset.FLOOR || (x ==posx && y ==posy)) {
+                 x = r.nextInt(WIDTH);
+                 y = r.nextInt(HEIGHT);
+            }
+            tiles[x][y] = Tileset.SNOWFLAKE;
+
+
+
+
+        }
+
+
+    }
 
 
 
@@ -347,23 +365,26 @@ public class WorldDemo {
         int pathLength;
         int coinFlip;
     }
-    public static void displayHUD(TETile[][] world, String HUD, int health) {
+    public  void displayHUD(TETile[][] world, String HUD, int keysleft) {
         int r = 0;
-        for (char i : HUD.toCharArray()) {
+        for (char i : "keys left:".toCharArray()) {
             TETile I = new TETile(i, Color.white, Color.black,
                     "i");
             world[r][HEIGHT - 1] = I;
             r+=1;
         }
-        for (int i = 0; i <=4 ; i++) {
-            if (health>0) {
-                world[r][HEIGHT - 1] = Tileset.FULLHEART;
-                health -=1;
+        for (int i = r; i <=numofsnowflakes + r ; i++) {
+            if (keysleft>0) {
+                world[i][HEIGHT - 1] = Tileset.SNOWFLAKE;
+                keysleft -=1;
+
+            }  else {
+                world[i][HEIGHT - 1] = Tileset.NOTHING;
 
 
-            } else {
-            world[r][HEIGHT - 1] = Tileset.EMPTYHEART;}
-            r+=1;
+            }
+
+
 
         }
 
@@ -374,39 +395,54 @@ public class WorldDemo {
 
 
 
-    public WorldDemo(long SEED, Random RANDOM,char[] smarray, boolean lpressed, int avatar) {
+    public WorldDemo(long SEED, Random RANDOM,char[] smarray, String pressed, int avatar) {
 
         TETile[][] myWorldDemo = new TETile[WIDTH][HEIGHT];
 
 
 
-
         gameOver = false;
+        int keysleft;
+
+        System.out.println(pressed);
+        System.out.println(pressed.equals("true"));
+        System.out.println(pressed.equals("replay"));
 
 
-        if (!lpressed) {
 
+
+        if (pressed.equals("true")) {
+            load();
+
+            Random r = new Random(randomseed);
+            makeRooms(myWorldDemo, r);
+            avatar = this.avatar;
+            randomizedsnow(myWorldDemo, r);
+
+
+
+        }
+        else if (pressed.equals("replay") ) {
+            replay();
+            Random r = new Random(randomseed);
+            makeRooms(myWorldDemo, r);
+            avatar = this.avatar;
+            randomizedsnow(myWorldDemo, r);
+
+        }
+        else  {
             randomseed = SEED;
             makeRooms(myWorldDemo, RANDOM);
 
             playersetup(RANDOM, myWorldDemo);
             this.avatar = avatar;
 
-
-
-
-        }
-        else  {
-            load();
-
-            Random r = new Random(randomseed);
-            makeRooms(myWorldDemo, r);
-            avatar = this.avatar;
-
-
+            randomizedsnow(myWorldDemo, RANDOM);
 
 
         }
+
+
 
 
         TETile initialtile = myWorldDemo[posx][posy];
@@ -438,9 +474,9 @@ public class WorldDemo {
         }
 
         myWorldDemo[posx][posy] = player;
-
-        String HUD = "";
-        displayHUD(myWorldDemo, HUD, health);
+        keysleft = numofsnowflakes;
+        String HUD = "keys left:";
+        displayHUD(myWorldDemo, HUD, keysleft);
 
 
 
@@ -508,9 +544,18 @@ public class WorldDemo {
 
 
                 myWorldDemo[posx][posy] = player;
-                if (health <=0) {
+                if (initialtile == Tileset.SNOWFLAKE) {
+                    keysleft-=1;
+                    initialtile = Tileset.FLOOR;
+
+
+                }
+
+
+                if (numofsnowflakes <=0) {
                     gameOver = true;
                 }
+                displayHUD(myWorldDemo, HUD,keysleft);
 
                 ter.renderFrame(myWorldDemo);
 
@@ -523,8 +568,9 @@ public class WorldDemo {
         else {
             TERenderer ter = new TERenderer();
             ter.initialize(WIDTH, HEIGHT);
+            ter.renderFrame(myWorldDemo);
             while (!gameOver) {
-                ter.renderFrame(myWorldDemo);
+
 
                 while (StdDraw.hasNextKeyTyped()) {
                     /** user input for where to move next*/
@@ -584,12 +630,20 @@ public class WorldDemo {
 
 
                     myWorldDemo[posx][posy] = player;
-                    if (health <= 0) {
+                    if (initialtile == Tileset.SNOWFLAKE) {
+                        keysleft-=1;
+                        initialtile = Tileset.FLOOR;
+
+
+                    }
+                    if (numofsnowflakes ==0) {
                         gameOver = true;
                     }
 
                 }
+                displayHUD(myWorldDemo, HUD, keysleft);
                 ter.renderFrame(myWorldDemo);
+
 
             }
             if (gameOver) {
@@ -600,8 +654,15 @@ public class WorldDemo {
         }
         }
 
+
+
+
+
+
+
+
     public void playersetup(Random RANDOM, TETile[][] myWorldDemo) {
-        health = 5;
+        numofsnowflakes = RANDOM.nextInt(10,20);
         posx = RANDOM.nextInt(80);
         posy = RANDOM.nextInt(29);
         while (myWorldDemo[posx][posy] != Tileset.FLOOR) {
@@ -615,21 +676,37 @@ public class WorldDemo {
     public void save() {
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter("save.txt"));
-            bw.write(""+health);
+            bw.write(""+avatar);
+            bw.newLine();
+
+            bw.write(""+numofsnowflakes);
             bw.newLine();
             bw.write(""+posx);
             bw.newLine();
             bw.write(""+posy);
             bw.newLine();
             bw.write(""+randomseed);
-            bw.newLine();
-            bw.write(""+avatar);
+
             bw.close();
+
+            BufferedWriter br = new BufferedWriter(new FileWriter("replay.txt"));
+            br.write(""+avatar);
+            br.newLine();
+
+            br.write(""+numofsnowflakes);
+            br.newLine();
+            br.write(""+posx);
+            br.newLine();
+            br.write(""+posy);
+            br.newLine();
+            br.write(""+randomseed);
+
+            br.close();
 
 
         }
         catch (Exception e) {
-            System.out.println("please play a game to load first");
+            System.out.println("please play a game to save first");
         }
 
     }
@@ -637,11 +714,12 @@ public class WorldDemo {
     public void load() {
         try {
             BufferedReader games = new BufferedReader(new FileReader("save.txt"));
-            health = Integer.parseInt(games.readLine());
+            avatar = Integer.parseInt(games.readLine());
+
+            numofsnowflakes = Integer.parseInt(games.readLine());
             posx = Integer.parseInt(games.readLine());
             posy = Integer.parseInt(games.readLine());
             randomseed = Integer.parseInt(games.readLine());
-            avatar = Integer.parseInt(games.readLine());
 
         }
         catch (Exception e) {
@@ -650,8 +728,22 @@ public class WorldDemo {
 
     }
 
+    public void replay() {
+        try {
+            BufferedReader games = new BufferedReader(new FileReader("replay.txt"));
+            avatar = Integer.parseInt(games.readLine());
 
+            numofsnowflakes = Integer.parseInt(games.readLine());
+            posx = Integer.parseInt(games.readLine());
+            posy = Integer.parseInt(games.readLine());
+            randomseed = Integer.parseInt(games.readLine());
 
+        }
+        catch (Exception e) {
+            System.out.println("please play a game to replay first");
+        }
+
+    }
 
 
 
@@ -660,17 +752,20 @@ public class WorldDemo {
     public static void main(String[] args) {
 
         //TETile[][] myWorldDemo = new TETile[WIDTH][HEIGHT];
-        boolean lpressed = false;
+
         int avatar = Integer.parseInt(args[1]);
         String seed = "";
         String input = args[0];
         long SEED = 0;
         Random RANDOM = null;
         char[] smarray = null;
-        if (args[0] == "true") {
-            lpressed = true;
-            new WorldDemo(0 , null, null, lpressed, avatar);
+        System.out.println(input);
+
+        if(input.equals("true") || input.equals("replay")) {
+
+            new WorldDemo(0 , null, null, input, avatar);
         }
+
         else {
             int i;
 
@@ -679,8 +774,11 @@ public class WorldDemo {
                     continue;
                 }
 
-                if (input.charAt(i) == 'l' || input.charAt(i) == 'L') {
-                    lpressed = true;
+                if (input.charAt(i) == 'l' || input.charAt(i) == 'L' ||
+                        input.charAt(i) == 's' || input.charAt(i) == 'S' ||
+                        input.charAt(i) == 'r' || input.charAt(i) == 'R'
+
+                ) {
                     break;
 
                 }
@@ -689,9 +787,7 @@ public class WorldDemo {
                     System.exit(0);
                 }
 
-                if (input.charAt(i) == 's' || input.charAt(i) == 'S') {
-                    break;
-                }
+
                 seed += input.charAt(i);
             }
 
@@ -701,10 +797,11 @@ public class WorldDemo {
                 }
                 smarray = stringmovement.toCharArray();
 
-                if (!lpressed) {
+                if (input.charAt(i) == 'l' || input.charAt(i) == 'L' ||
+                        input.charAt(i) == 'r' || input.charAt(i) == 'R') {
                 SEED = Integer.parseInt(seed);
                 RANDOM = new Random(SEED); }
-            new WorldDemo(SEED, RANDOM, smarray, lpressed, avatar);
+            new WorldDemo(SEED, RANDOM, smarray, args[0], avatar);
 
 
         }

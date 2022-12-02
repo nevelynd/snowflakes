@@ -5,6 +5,8 @@ import byow.TileEngine.TETile;
 import edu.princeton.cs.introcs.StdDraw;
 
 import java.awt.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.time.temporal.ValueRange;
 public class Engine {
     TERenderer ter = new TERenderer();
@@ -65,6 +67,10 @@ public class Engine {
             if (letter == 'l' || letter == 'L') {
                 s[0] = "true";
                 }
+
+            if (letter == 'r' || letter == 'R') {
+                s[0] = "replay";
+            }
             if (seedstart) {
             seed += letter; }
             }
@@ -73,7 +79,7 @@ public class Engine {
 
         }
 
-        if (s[0] != "true") {
+        if (!s[0].equals("true") && !s[0].equals("replay")) {
             s[0]= (seed);
         }
         s[1] = String.valueOf(avatar);
@@ -102,7 +108,9 @@ public class Engine {
         StdDraw.show();
         StdDraw.text(WIDTH / 2,  HEIGHT / 2 , "Quit (Q)");
         StdDraw.show();
-        StdDraw.text(WIDTH / 2,  HEIGHT / 2 - 1, "Change Avatar (C)");
+        StdDraw.text(WIDTH / 2,  HEIGHT / 2 - 1, "Replay Game (R)");
+        StdDraw.show();
+        StdDraw.text(WIDTH / 2,  HEIGHT / 2 - 2, "Change Avatar (C)");
         StdDraw.show();
     }
     public int changeavatar() {
@@ -115,7 +123,29 @@ public class Engine {
         StdDraw.clear(Color.BLACK);
         StdDraw.setPenColor(Color.WHITE);
 
+
         StdDraw.text(WIDTH / 2, HEIGHT / 2 + 12, "current avatar:");
+
+        StdDraw.show();
+        int avatar = loadavatar();
+        if (avatar == '0') {
+            StdDraw.text(WIDTH / 2, HEIGHT / 2 + 10, "@");
+        }
+        if (avatar == '1') {
+            StdDraw.text(WIDTH / 2, HEIGHT / 2 + 10, "ღ");
+        }
+        if (avatar == '2') {
+            StdDraw.text(WIDTH / 2, HEIGHT / 2 + 10, "✶");
+        }
+        if (avatar == '3') {
+            StdDraw.text(WIDTH / 2, HEIGHT / 2 + 10, "ツ");
+        }
+        if (avatar == '4') {
+            StdDraw.text(WIDTH / 2, HEIGHT / 2 + 10, "♕");
+        }
+        if (avatar == '5') {
+            StdDraw.text(WIDTH / 2, HEIGHT / 2 + 10, "☯");
+        }
         StdDraw.show();
 
 
@@ -148,42 +178,25 @@ public class Engine {
                 StdDraw.setPenColor(Color.BLACK);
                 StdDraw.filledRectangle(WIDTH / 2, HEIGHT / 2 + 10, 2, 1);
                 StdDraw.setPenColor(Color.WHITE);
-
+                if (letter == '0') {
+                    StdDraw.text(WIDTH / 2, HEIGHT / 2 + 10, "@");
+                }
                 if (letter == '1') {
-
-
-
                     StdDraw.text(WIDTH / 2, HEIGHT / 2 + 10, "ღ");
-
-
-
                 }
                 if (letter == '2') {
-
                     StdDraw.text(WIDTH / 2, HEIGHT / 2 + 10, "✶");
-
-
                 }
                 if (letter == '3') {
-
                     StdDraw.text(WIDTH / 2, HEIGHT / 2 + 10, "ツ");
-
-
                 }
                 if (letter == '4') {
-
                     StdDraw.text(WIDTH / 2, HEIGHT / 2 + 10, "♕");
-
-
                 }
                 if (letter == '5') {
-
                     StdDraw.text(WIDTH / 2, HEIGHT / 2 + 10, "☯");
-
                 }
                 StdDraw.show();
-
-
 
             }
         }
@@ -191,8 +204,17 @@ public class Engine {
     }
 
 
+    public char loadavatar() {
+        char avatar = '0';
+        try {
+            BufferedReader games = new BufferedReader(new FileReader("save.txt"));
+            avatar = games.readLine().charAt(0);
+        } catch (Exception e) {
+            System.out.println("please play a game to load first");
+        }
+        return avatar;
 
-
+    }
 
 
 
