@@ -24,8 +24,8 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 
 public class WorldDemo {
-    public static final int WIDTH = 80;
-    public static final int HEIGHT = 30;
+    public static final int WIDTH =  90;
+    public static final int HEIGHT = 45;
 
     /** Max width/height integer for a room.*/
     public static final int ROOM_MAX = 10;
@@ -93,6 +93,7 @@ public class WorldDemo {
 
         int maxRooms = random.nextInt(7,15);
 
+
         for(int i = 0; i < maxRooms; i++) {
             cont:
                 while (true) {
@@ -138,11 +139,14 @@ public class WorldDemo {
                     break;
             }
             /** Add valid rectangle to array.*/
+
             rooms.add(ra);
             if (door == null || (door.x < ra.x || door.y < ra.y) ) {
                 door = new Point(ra.x + ra.width/2, ra.y - 1);
             }
-            Point p = new Point(ra.x + room_width / 2, ra.y - ra.height / 2);
+
+
+            Point p = new Point(ra.x + room_width / 2 + 1, ra.y - ra.height / 2 - 1 );
             points.put(ra, p);
             pointsx.put(ra, p.x);
             pointsy.put(ra, p.y);
@@ -163,12 +167,24 @@ public class WorldDemo {
         int maxy = Collections.max(pointsy.values());
         int minx = Collections.min(pointsx.values());
         int miny = Collections.min(pointsy.values());
-        /** maybe keep track of connected rects and see how to prevent unnecessary hallways*/
+        //Rectangle bound = new Rectangle(minx, maxy, maxx - minx, maxy - miny );
+        for (int r = 0; r<rooms.size() ; r++) {
+            Rectangle rrr = rooms.get(r);
+            if (r == rooms.size() - 1) {
+                createLinearPathe(tiles, points.get(rrr).x, points.get(rrr).y, points.get(rooms.get(0)).x, points.get(rooms.get(0)).y, random);
+                //createLinearPath(tiles, rrr.x, rrr.y, (rooms.get(0)).x, (rooms.get(0)).y, random);
 
-        for (Rectangle room : rooms) {
-            createLinearPath(tiles, points.get(room).x, points.get(room).y, maxx, maxy, random);
+            } else {
+                //createLinearPath(tiles, rrr.x, rrr.y, (rooms.get(r+1)).x, (rooms.get(r+1)).y, random);
+                createLinearPathe(tiles, points.get(rrr).x, points.get(rrr).y, points.get(rooms.get(r+1)).x, points.get(rooms.get(r+1)).y, random);
+
+            }
+
 
         }
+
+
+/**
         for (int x = 0; x < WIDTH; x += 1) {
             for (int y = 0; y < HEIGHT; y += 1) {
                 if (tiles[x][y] == Tileset.FLOOR && ((tiles[x][y + 1] != Tileset.FLOOR && tiles[x][y + 1] != Tileset.WALL)
@@ -179,7 +195,7 @@ public class WorldDemo {
 
                 }
             }
-        }
+        }*/
 
 
         int doorx = door.x;
@@ -227,7 +243,7 @@ public class WorldDemo {
         } else {
             for (int x = fromX; x != destinationX; x++) {
                 for (int count = -1; count != 2; count++) {
-                    if (fromY+count > HEIGHT || fromY+count > 0) {
+                    if (fromY+count < HEIGHT || fromY+count > 0) {
                         if (tiles[x][fromY+count] != Tileset.FLOOR) {
                             tiles[x][fromY+count] = Tileset.WALL;
                         }
@@ -259,7 +275,71 @@ public class WorldDemo {
                 tiles[fromX][y] = Tileset.FLOOR;
             }
         }
+
     }
+
+    public static void createLinearPathe(TETile[][] tiles, int fromX, int fromY, int destinationX, int destinationY, Random rndom) {
+        if (fromX > destinationX) {
+            for (int x = fromX; x >= destinationX; x--) {
+                for (int count = -1; count != 2; count++) {
+                    if (fromY + count < HEIGHT && fromY + count > 0) {
+                        if (tiles[x][fromY + count] != Tileset.FLOOR) {
+                            tiles[x][fromY + count] = Tileset.WALL;
+                        }
+                    }
+                }
+
+
+
+
+
+                tiles[x][fromY] = Tileset.FLOOR;
+            }
+        } else {
+            for (int x = fromX; x <= destinationX; x++) {
+                for (int count = -1; count != 2; count++) {
+                    if (fromY+count < HEIGHT && fromY+count > 0) {
+                        if (tiles[x][fromY+count] != Tileset.FLOOR) {
+                            tiles[x][fromY+count] = Tileset.WALL;
+                        }
+                    }
+                }
+                tiles[x][fromY] = Tileset.FLOOR;
+            }
+        }
+
+        if (fromY > destinationY) {
+            for (int y = fromY; y >= destinationY ; y--) {
+                for (int count = -1; count != 2; count++) {
+                    if (destinationX+count < WIDTH && destinationX+count > 0) {
+                        if (tiles[destinationX+count][y] != Tileset.FLOOR) {
+                            tiles[destinationX+count][y] = Tileset.WALL;
+                        }
+                    }
+                }
+
+                tiles[destinationX][y] = Tileset.FLOOR;
+            }
+        } else {
+            for (int y = fromY; y<= destinationY ; y++) {
+                for (int count = -1; count != 2; count++) {
+                    if (destinationX+count < WIDTH && destinationX+count > 0) {
+                        if (tiles[destinationX+count][y] != Tileset.FLOOR) {
+                            tiles[destinationX+count][y] = Tileset.WALL;
+                        }
+                    }
+                }
+                tiles[destinationX][y] = Tileset.FLOOR;
+            }
+        }
+
+    }
+
+
+
+
+
+
 
     /** Started creating a path method that does not generate a boring pathQ*/
     public static void createPath(TETile[][] tiles, int fromX, int fromY, int destinationX, int destinationY, Random random) {
@@ -272,17 +352,17 @@ public class WorldDemo {
         for (char i : HUD.toCharArray()) {
             TETile I = new TETile(i, Color.white, Color.black,
                     "i");
-            world[r][29] = I;
+            world[r][HEIGHT - 1] = I;
             r+=1;
         }
         for (int i = 0; i <=4 ; i++) {
             if (health>0) {
-                world[r][29] = Tileset.FULLHEART;
+                world[r][HEIGHT - 1] = Tileset.FULLHEART;
                 health -=1;
 
 
             } else {
-            world[r][29] = Tileset.EMPTYHEART;}
+            world[r][HEIGHT - 1] = Tileset.EMPTYHEART;}
             r+=1;
 
         }

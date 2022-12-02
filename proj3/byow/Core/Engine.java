@@ -9,14 +9,16 @@ import java.time.temporal.ValueRange;
 public class Engine {
     TERenderer ter = new TERenderer();
     /* Feel free to change the width and height. */
-    public static final int WIDTH = 80;
-    public static final int HEIGHT = 30;
-
+    public static final int WIDTH =  90;
+    public static final int HEIGHT = 45;
     /**
      * Method used for exploring a fresh world. This method should handle all inputs,
      * including inputs from the main menu.
      */
     public void interactWithKeyboard() {
+        StdDraw.setCanvasSize(WIDTH * 16 , HEIGHT * 16);
+        StdDraw.setXscale(0, WIDTH);
+        StdDraw.setYscale(0, HEIGHT);
 
         /** main menu*/
         mainmenu();
@@ -83,12 +85,11 @@ public class Engine {
     }
 
     public void mainmenu() {
-        StdDraw.setCanvasSize(WIDTH * 16 , HEIGHT * 16);
+
         Font font = new Font("Monaco", Font.BOLD, 30);
         Font smallfont = new Font("Monaco", Font.BOLD, 15);
         StdDraw.setFont(font);
-        StdDraw.setXscale(0, WIDTH);
-        StdDraw.setYscale(0, HEIGHT);
+
         StdDraw.clear(Color.BLACK);
         StdDraw.enableDoubleBuffering();
         StdDraw.setPenColor(Color.WHITE);
@@ -107,11 +108,9 @@ public class Engine {
     public int changeavatar() {
         boolean bpressed = false;
         int selected = 0;
-        StdDraw.setCanvasSize(WIDTH * 16 , HEIGHT * 16);
         Font font = new Font("Monaco", Font.BOLD, 20);
         StdDraw.setFont(font);
-        StdDraw.setXscale(0, WIDTH);
-        StdDraw.setYscale(0, HEIGHT);
+
         StdDraw.enableDoubleBuffering();
         StdDraw.clear(Color.BLACK);
         StdDraw.setPenColor(Color.WHITE);
