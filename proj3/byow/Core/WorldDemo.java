@@ -443,7 +443,7 @@ public class WorldDemo {
         }
 
 
-
+//meep
 
         TETile initialtile = myWorldDemo[posx][posy];
         TETile player = Tileset.AVATAR;
