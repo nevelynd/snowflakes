@@ -349,7 +349,6 @@ public class WorldDemo {
 
 
 
-
         }
 
 
@@ -396,14 +395,12 @@ public class WorldDemo {
 
 
     public WorldDemo(long SEED, Random RANDOM,char[] smarray, String pressed, int avatar) {
-
         TETile[][] myWorldDemo = new TETile[WIDTH][HEIGHT];
 
 
 
         gameOver = false;
         int keysleft;
-
         System.out.println(pressed);
         System.out.println(pressed.equals("true"));
         System.out.println(pressed.equals("replay"));
@@ -773,14 +770,12 @@ public class WorldDemo {
                 if (input.charAt(i) == 'n' || input.charAt(i) == 'N') {
                     continue;
                 }
-
                 if (input.charAt(i) == 'l' || input.charAt(i) == 'L' ||
                         input.charAt(i) == 's' || input.charAt(i) == 'S' ||
                         input.charAt(i) == 'r' || input.charAt(i) == 'R'
 
                 ) {
                     break;
-
                 }
 
                 if (input.charAt(i) == ':' && (input.charAt(i + 1) == 'q' || input.charAt(i + 1) == 'Q')) {

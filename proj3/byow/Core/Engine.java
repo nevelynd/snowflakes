@@ -66,7 +66,7 @@ public class Engine {
             }
             if (letter == 'l' || letter == 'L') {
                 s[0] = "true";
-                }
+            }
 
             if (letter == 'r' || letter == 'R') {
                 s[0] = "replay";
@@ -84,9 +84,6 @@ public class Engine {
         }
         s[1] = String.valueOf(avatar);
         WorldDemo.main(s);
-
-
-
 
     }
 
@@ -275,25 +272,15 @@ public class Engine {
                 newinput += input.charAt(j);
 
 
-
             }
             s[0] = newinput;
 
 
 
         }
-
-
-
-
-
         TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
         WorldDemo.main(s);
-
         return finalWorldFrame;
-
-
-
     }
 
 
