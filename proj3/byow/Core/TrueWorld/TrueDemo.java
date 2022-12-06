@@ -149,16 +149,24 @@ public class TrueDemo {
 
 
             if (replay) {
+                displayHUD(tiles, null, keysLeft, null);
                 ter.renderFrame(tiles, true);
             }
 
-            if (gameOver) {
-                System.exit(0);
-            }
+
+
+
         }
-        ter.renderFrame(tiles);
+
+        if (replay) {
+            System.exit(0);
+        }
+
         if (!replay) {
+            displayHUD(tiles, null, keysLeft, null);
+            ter.renderFrame(tiles);
             while (!gameOver) {
+
                 hoverHUD(tiles);
 
                 while (StdDraw.hasNextKeyTyped()) {
@@ -215,8 +223,10 @@ public class TrueDemo {
                     if (keysLeft ==0  ){
                         gameOver = true;
                     }
+
+                    String ct = hoverHUD(tiles);
+                    displayHUD(tiles, null, keysLeft, ct);
                     ter.renderFrame(tiles);
-                    displayHUD(tiles, null, keysLeft);
                 }
             }
         }
@@ -271,11 +281,12 @@ public class TrueDemo {
         }
 
         String HUD = "Keys left:";
-        displayHUD(tiles, HUD, keysLeft);
+        String ct = hoverHUD(tiles);
+        displayHUD(tiles, HUD, keysLeft, ct);
         ter.renderFrame(tiles);
 
         while (!gameOver) {
-            hoverHUD(tiles);
+
             while (StdDraw.hasNextKeyTyped()) {
                 char letter = StdDraw.nextKeyTyped();
                 tiles[playerX][playerY] = initialTile;
@@ -326,10 +337,10 @@ public class TrueDemo {
                 if (initialTile == Tileset.SNOWFLAKE) {
                     keysLeft -= 1;
                     initialTile = Tileset.FLOOR;
-                    displayHUD(tiles, HUD, keysLeft);
+
                 }
-
-
+                ct = hoverHUD(tiles);
+                displayHUD(tiles, HUD, keysLeft, ct);
                 ter.renderFrame(tiles);
             }
         }
@@ -338,7 +349,7 @@ public class TrueDemo {
         }
     }
 
-    public  void displayHUD(TETile[][] world, String HUD, int keysLeft) {
+    public  void displayHUD(TETile[][] world, String HUD, int keysLeft, String currentTile) {
         int r = 0;
         for (char i : "keys left:".toCharArray()) {
             TETile I = new TETile(i, Color.white, Color.black,
@@ -346,8 +357,8 @@ public class TrueDemo {
             world[r][HEIGHT -1] = I;
             r+=1;
         }
-        for (int i = r; i < snowflakesNum + r ; i++) {
-            if (keysLeft>0) {
+        for (int i = r; i < WIDTH ; i++) {
+            if (keysLeft>1) {
                 world[i][HEIGHT - 1] = Tileset.SNOWFLAKE;
                 keysLeft -=1;
 
@@ -355,9 +366,19 @@ public class TrueDemo {
                 world[i][HEIGHT - 1] = Tileset.NOTHING;
             }
         }
+
+        char[] ctarray =  currentTile.toCharArray();
+        int count = 0;
+        for (int i = WIDTH - currentTile.length() ; i < WIDTH; i++) {
+            TETile I = new TETile(ctarray[count], Color.white, Color.black,
+                    "i");
+            world[i][HEIGHT -1] = I;
+            count +=1;
+
+        }
     }
 
-    public void hoverHUD(TETile[][] world) {
+    public String hoverHUD(TETile[][] world) {
         String currentTile = "false";
         int x = (int) StdDraw.mouseX();
         int y = (int) StdDraw.mouseY();
@@ -369,6 +390,23 @@ public class TrueDemo {
         if (world[x][y] == Tileset.FLOOR) {
             currentTile = "Floor";
         }
+        if (world[x][y] == Tileset.GRASS) {
+            currentTile = "Grass";
+        } if (world[x][y] == Tileset.SAND) {
+            currentTile = "Sand";
+        }
+        if (world[x][y] == Tileset.TREE) {
+            currentTile = "Tree";
+        }
+        if (world[x][y] == Tileset.MOUNTAIN) {
+            currentTile = "Mountain";
+        } if (world[x][y] == Tileset.WATER) {
+            currentTile = "Water";
+        }
+        return currentTile;
+
+
+        //System.out.println(currentTile);
     }
 
 
