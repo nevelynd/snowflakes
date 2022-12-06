@@ -380,13 +380,8 @@ public class WorldDemo {
             }  else {
                 world[i][HEIGHT - 1] = Tileset.NOTHING;
 
-
             }
-
-
-
         }
-
     }
 
 
@@ -511,7 +506,6 @@ public class WorldDemo {
                         initialtile = myWorldDemo[posx][posy + 1];
                         posy = posy + 1;
                     }
-
                 }
 
                 /** moves avatar down if allowed*/

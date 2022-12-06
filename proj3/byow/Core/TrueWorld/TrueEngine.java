@@ -1,13 +1,18 @@
 package byow.Core.TrueWorld;
 
+import byow.Core.WorldDemo;
 import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 import edu.princeton.cs.introcs.StdDraw;
 
 import java.awt.*;
+import java.time.temporal.ValueRange;
 import java.util.Random;
 
 public class TrueEngine {
+
+    public static final int WIDTH =  90;
+    public static final int HEIGHT = 45;
     public void interactWithKeyboard(Menu menu, int avatar) {
         String[] s = new String[3];
         s[0] = String.valueOf(false);
@@ -32,10 +37,14 @@ public class TrueEngine {
                     break;
                 }
                 if (letter == 'l' || letter == 'L') {
-                    s[0] = String.valueOf(true);
+                    TrueDemo myWorld = new TrueDemo();
+                    myWorld.load();
+                    return;
                 }
                 if (letter == 'r' || letter == 'R') {
-                    s[0] = "replay";
+                    TrueDemo myWorld = new TrueDemo();
+                    myWorld.replay();
+                    return;
                 }
             }
         }
@@ -46,5 +55,64 @@ public class TrueEngine {
         s[1] = String.valueOf(avatar);
         TrueDemo myWorld = new TrueDemo();
         myWorld.TrueDemo(s);
-        }
     }
+
+    public TETile[][] interactWithInputString(String input) {
+        int avatar = 0;
+        String seed = "";
+        String remaining = "";
+        if (input.charAt(0) == 'n' || input.charAt(0) == 'N') {
+            for (int i = 1; i < input.length(); i++) {
+                char current = input.charAt(i);
+                if (Character.isDigit(current)) {
+                    seed += current;
+                } else {
+                    remaining += current;
+                }
+            }
+        }
+        TETile[][] myWorld = new TETile[WIDTH][HEIGHT];
+        TrueDemo myDemo = new TrueDemo();
+        myDemo.continueTrueDemo(seed, remaining, input, avatar, myWorld, false);
+        return myWorld;
+    }
+
+    public TETile[][] interactWithInputString(String input, int avatar) {
+        String seed = "";
+        String remaining = "";
+        if (input.charAt(0) == 'n' || input.charAt(0) == 'N') {
+            for (int i = 1; i < input.length(); i++) {
+                char current = input.charAt(i);
+                if (Character.isDigit(current)) {
+                    seed += current;
+                } else {
+                    remaining += current;
+                }
+            }
+        }
+        TETile[][] myWorld = new TETile[WIDTH][HEIGHT];
+        TrueDemo myDemo = new TrueDemo();
+        myDemo.continueTrueDemo(seed, remaining, input, avatar, myWorld, false);
+        return myWorld;
+    }
+
+    public TETile[][] interactWithInputString(String input, int avatar, Boolean replay) {
+        String seed = "";
+        String remaining = "";
+        if (input.charAt(0) == 'n' || input.charAt(0) == 'N') {
+            for (int i = 1; i < input.length(); i++) {
+                char current = input.charAt(i);
+                if (Character.isDigit(current)) {
+                    seed += current;
+                } else {
+                    remaining += current;
+                }
+            }
+        }
+        TETile[][] myWorld = new TETile[WIDTH][HEIGHT];
+        TrueDemo myDemo = new TrueDemo();
+        myDemo.continueTrueDemo(seed, remaining, input, avatar, myWorld, replay);
+        return myWorld;
+    }
+}
+

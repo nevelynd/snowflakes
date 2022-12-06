@@ -160,7 +160,6 @@ public class Engine {
         StdDraw.show();
 
 
-
         while (!bpressed) {
             if (StdDraw.hasNextKeyTyped() ) {
 

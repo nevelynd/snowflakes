@@ -1,11 +1,13 @@
 package byow.Core.TrueWorld;
 
+import byow.Core.Engine;
 import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 import edu.princeton.cs.algs4.StdDraw;
 
 import java.awt.*;
+import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
@@ -23,6 +25,7 @@ public class TrueDemo {
     private static final List<Rectangle> rooms = new ArrayList<>();
     private static final List<Rectangle> validConnections = new ArrayList<>();
     private static final ArrayList<Point> validCoordinates = new ArrayList<>();
+    private static ArrayList<Point> snowflakeLocation = new ArrayList<>();
     private static List<Rectangle> lockableRooms = new ArrayList<>();
     private static Point spawnPoint;
     public int posX;
@@ -53,12 +56,29 @@ public class TrueDemo {
         playGame(myTrueDemo, random, avatar, s[0]);
     }
 
-    private void playGame(TETile[][] tiles, Random seed, int avatar, String typedSeed) {
+    public TETile[][] continueTrueDemo(String pastSeed, String remaining, String total, int avatar, TETile[][] tiles, Boolean replay) {
+        long seed = Long.valueOf(pastSeed);
+        myWorld = tiles;
+        Random random = new Random(seed);
+        tiles = declareWorldT(tiles, random);
+        createRooms(tiles, random);
+        createHallways(tiles, random);
+        certifyOrigin(tiles, rooms.get(0));
+        clearWalls(tiles, random);
+        ter.initialize(WIDTH, HEIGHT, 0, -2);
+        ter.renderFrame(tiles);
+        playGameState(tiles, random, avatar, remaining, total, replay);
+        return tiles;
+    }
+
+    private void playGameState(TETile[][] tiles, Random seed, int avatar, String remaining, String total, Boolean replay) {
         int playerX = rooms.get(0).x + rooms.get(0).width / 2;
         int playerY = rooms.get(0).y + rooms.get(0).height / 2;
         TETile player = Tileset.AVATAR;
-        switch(avatar) {
+        switch (avatar) {
             case 0:
+                player = Tileset.AVATAR;
+                break;
             case 1:
                 player = Tileset.curlyheart;
                 break;
@@ -70,18 +90,18 @@ public class TrueDemo {
                 break;
             case 4:
                 player = Tileset.crown;
+                break;
             case 5:
                 player = Tileset.yinyang;
+                break;
         }
-        TETile initialtile = tiles[playerX][playerY];
+        TETile initialTile = tiles[playerX][playerY];
         tiles[playerX][playerY] = player;
-        ter.renderFrame(tiles);
         gameOver = false;
         int keysLeft;
         snowflakesNum = seed.nextInt(5, validCoordinates.size());
         keysLeft = snowflakesNum;
-
-        for (int i = 0; i < snowflakesNum - 1; i++) {
+        for (int i = 0; i <= snowflakesNum; i++) {
             int randomIndex = seed.nextInt(validCoordinates.size());
             int xPOI = validCoordinates.get(randomIndex).x;
             int yPOI = validCoordinates.get(randomIndex).y;
@@ -91,125 +111,264 @@ public class TrueDemo {
                     lockableRooms.add(rb);
                 }
             }
-            tiles[playerX][playerY + 1] = Tileset.SNOWFLAKE;
-
             tiles[xPOI][yPOI] = Tileset.SNOWFLAKE;
         }
+
+        for(int i = 1; i < remaining.length(); i++) {
+            char currentLetter = remaining.charAt(i);
+            tiles[playerX][playerY] = initialTile;
+            if (currentLetter == 'a' || currentLetter == 'A') {
+                if (playerX - 1 >= 0 && tiles[playerX - 1][playerY] != Tileset.WALL) {
+                    initialTile = tiles[playerX - 1][playerY];
+                    playerX = playerX - 1;
+                }
+            }
+            if (currentLetter == 'd' || currentLetter == 'D') {
+                if (playerX + 1 <= WIDTH - 1 && tiles[playerX + 1][playerY] != Tileset.WALL) {
+                    initialTile = tiles[playerX + 1][playerY];
+                    playerX = playerX + 1;
+                }
+            }
+            if (currentLetter == 'w' || currentLetter == 'W') {
+                if (playerY + 1 <= HEIGHT - 1 && tiles[playerX][playerY + 1] != Tileset.WALL) {
+                    initialTile = tiles[playerX][playerY + 1];
+                    playerY = playerY + 1;
+                }
+            }
+            if (currentLetter == 's' || currentLetter == 'S') {
+                if (playerY - 1 >= 0 && tiles[playerX][playerY - 1] != Tileset.WALL) {
+                    initialTile = tiles[playerX][playerY - 1];
+                    playerY = playerY - 1;
+                }
+            }
+            tiles[playerX][playerY] = player;
+            if (initialTile == Tileset.SNOWFLAKE) {
+                keysLeft -= 1;
+                initialTile = Tileset.FLOOR;
+            }
+            if (replay) {
+                ter.renderFrame(tiles, true);
+            }
+        }
+        ter.renderFrame(tiles);
+        if (!replay) {
+            while (!gameOver) {
+
+                while (StdDraw.hasNextKeyTyped()) {
+                    char letter = StdDraw.nextKeyTyped();
+                    tiles[playerX][playerY] = initialTile;
+
+                    if (letter == ':') {
+                        total += letter;
+                        while (!StdDraw.hasNextKeyTyped()) {
+                            StdDraw.pause(1000);
+                        }
+                        char nextLetter = StdDraw.nextKeyTyped();
+                        if (nextLetter == 'Q' || nextLetter == 'q') {
+                            total += nextLetter;
+                            gameOver = true;
+                        }
+                        save(total);
+                    }
+                    if (letter == 'a' || letter == 'A') {
+                        if (playerX - 1 >= 0 && tiles[playerX - 1][playerY] != Tileset.WALL) {
+                            initialTile = tiles[playerX - 1][playerY];
+                            playerX = playerX - 1;
+                            total += letter;
+                        }
+                    }
+                    if (letter == 'd' || letter == 'D') {
+                        if (playerX + 1 <= WIDTH - 1 && tiles[playerX + 1][playerY] != Tileset.WALL) {
+                            initialTile = tiles[playerX + 1][playerY];
+                            playerX = playerX + 1;
+                            total += letter;
+                        }
+
+                    }
+                    if (letter == 'w' || letter == 'W') {
+                        if (playerY + 1 <= HEIGHT - 1 && tiles[playerX][playerY + 1] != Tileset.WALL) {
+                            initialTile = tiles[playerX][playerY + 1];
+                            playerY = playerY + 1;
+                            total += letter;
+                        }
+
+                    }
+                    if (letter == 's' || letter == 'S') {
+                        if (playerY - 1 >= 0 && tiles[playerX][playerY - 1] != Tileset.WALL) {
+                            initialTile = tiles[playerX][playerY - 1];
+                            playerY = playerY - 1;
+                            total += letter;
+                        }
+                    }
+                    tiles[playerX][playerY] = player;
+                    if (initialTile == Tileset.SNOWFLAKE) {
+                        keysLeft -= 1;
+                        initialTile = Tileset.FLOOR;
+                    }
+                    ter.renderFrame(tiles);
+                }
+            }
+        }
+    }
+
+    private void playGame(TETile[][] tiles, Random seed, int avatar, String typedSeed) {
+        int playerX = rooms.get(0).x + rooms.get(0).width / 2;
+        int playerY = rooms.get(0).y + rooms.get(0).height / 2;
+        TETile player = Tileset.AVATAR;
+        switch(avatar) {
+            case 0:
+                player = Tileset.AVATAR;
+                break;
+            case 1:
+                player = Tileset.curlyheart;
+                break;
+            case 2:
+                player = Tileset.star;
+                break;
+            case 3:
+                player = Tileset.smiley;
+                break;
+            case 4:
+                player = Tileset.crown;
+                break;
+            case 5:
+                player = Tileset.yinyang;
+                break;
+        }
+        TETile initialTile = tiles[playerX][playerY];
+        tiles[playerX][playerY] = player;
+        gameOver = false;
+        int keysLeft;
+        snowflakesNum = seed.nextInt(5, validCoordinates.size());
+        keysLeft = snowflakesNum;
+
+        for (int i = 0; i < snowflakesNum; i++) {
+            int randomIndex = seed.nextInt(validCoordinates.size());
+            int xPOI = validCoordinates.get(randomIndex).x;
+            int yPOI = validCoordinates.get(randomIndex).y;
+            if (!snowflakeLocation.contains(validCoordinates.get(randomIndex))) {
+                snowflakeLocation.add(validCoordinates.get(randomIndex));
+            } else {
+                continue;
+            }
+            tiles[xPOI][yPOI] = Tileset.SNOWFLAKE;
+        }
+
+        String HUD = "Keys left:";
+        displayHUD(tiles, HUD, keysLeft);
         ter.renderFrame(tiles);
 
         while (!gameOver) {
-
-
+            hoverHUD(tiles);
             while (StdDraw.hasNextKeyTyped()) {
-                /** user input for where to move next*/
                 char letter = StdDraw.nextKeyTyped();
+                tiles[playerX][playerY] = initialTile;
 
-
-                /** previous tile setting before move*/
-                tiles[playerX][playerY] = initialtile;
-
-                /** quits and saves*/
                 if (letter == ':') {
+                    typedSeed += letter;
                     while (!StdDraw.hasNextKeyTyped()) {
-                        StdDraw.pause(1000); }
-                    char nextletter = StdDraw.nextKeyTyped();
-                    if (nextletter == 'Q' || nextletter == 'q') {
-                        gameOver = true;
-
+                        StdDraw.pause(1000);
                     }
-                    save();
-
+                    char nextLetter = StdDraw.nextKeyTyped();
+                    if (nextLetter == 'Q' || nextLetter == 'q') {
+                        typedSeed += nextLetter;
+                        gameOver = true;
+                    }
+                    save(typedSeed);
                 }
-
-
-
-
-
-
-                /** moves avatar left if allowed*/
                 if (letter == 'a' || letter == 'A') {
                     if (playerX - 1 >= 0 && tiles[playerX - 1][playerY] != Tileset.WALL) {
-                        initialtile = tiles[playerX - 1][playerY];
+                        initialTile = tiles[playerX - 1][playerY];
                         playerX = playerX - 1;
+                        typedSeed += letter;
                     }
                 }
-
-                /** moves avatar right if allowed*/
                 if (letter == 'd' || letter == 'D') {
-
                     if (playerX + 1 <= WIDTH - 1 && tiles[playerX + 1][playerY] != Tileset.WALL) {
-                        initialtile = tiles[playerX + 1][playerY];
+                        initialTile = tiles[playerX + 1][playerY];
                         playerX = playerX + 1;
+                        typedSeed += letter;
                     }
 
                 }
-
-
-
-                /** moves avatar up if allowed*/
                 if (letter == 'w' || letter == 'W') {
                     if (playerY + 1 <= HEIGHT - 1 && tiles[playerX][playerY + 1] != Tileset.WALL) {
-                        initialtile = tiles[playerX][playerY + 1];
+                        initialTile = tiles[playerX][playerY + 1];
                         playerY = playerY + 1;
+                        typedSeed += letter;
                     }
 
                 }
-
-                /** moves avatar down if allowed*/
                 if (letter == 's' || letter == 'S') {
                     if (playerY - 1 >= 0 && tiles[playerX][playerY - 1] != Tileset.WALL) {
-                        initialtile = tiles[playerX][playerY - 1];
+                        initialTile = tiles[playerX][playerY - 1];
                         playerY = playerY - 1;
+                        typedSeed += letter;
                     }
                 }
                 tiles[playerX][playerY] = player;
-                if (initialtile == Tileset.SNOWFLAKE) {
-                    //keysleft-=1;
-                    initialtile = Tileset.FLOOR;
-
-
+                if (initialTile == Tileset.SNOWFLAKE) {
+                    keysLeft -= 1;
+                    initialTile = Tileset.FLOOR;
+                    displayHUD(tiles, HUD, keysLeft);
                 }
-
                 ter.renderFrame(tiles);
-            }}
-
-
+            }
+        }
     }
 
-    public void save() {
+    public  void displayHUD(TETile[][] world, String HUD, int keysLeft) {
+        int r = 0;
+        for (char i : "keys left:".toCharArray()) {
+            TETile I = new TETile(i, Color.white, Color.black,
+                    "i");
+            world[r][HEIGHT - 1] = I;
+            r+=1;
+        }
+        for (int i = r; i <= snowflakesNum + r ; i++) {
+            if (keysLeft>0) {
+                world[i][HEIGHT - 1] = Tileset.SNOWFLAKE;
+                keysLeft -=1;
+
+            }  else {
+                world[i][HEIGHT - 1] = Tileset.NOTHING;
+            }
+        }
+    }
+
+    public void hoverHUD(TETile[][] world) {
+        String currentTile = "false";
+        int x = (int) StdDraw.mouseX();
+        int y = (int) StdDraw.mouseY();
+        if (world[x][y] == Tileset.SNOWFLAKE) {
+            currentTile = "Snowflake";
+        } if (world[x][y] == Tileset.WALL) {
+            currentTile = "Wall";
+        }
+        if (world[x][y] == Tileset.FLOOR) {
+            currentTile = "Floor";
+        }
+    }
+
+
+
+    public void save(String typedSeed) {
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter("save.txt"));
-            bw.write(""+avatar);
+            bw.write("" + avatar);
             bw.newLine();
-
-            bw.write(""+numofsnowflakes);
-            bw.newLine();
-            bw.write(""+posx);
-            bw.newLine();
-            bw.write(""+posy);
-            bw.newLine();
-            bw.write(""+randomseed);
-
+            bw.write("" + typedSeed);
             bw.close();
 
             BufferedWriter br = new BufferedWriter(new FileWriter("replay.txt"));
-            br.write(""+avatar);
+            br.write("" + avatar);
             br.newLine();
-
-            br.write(""+numofsnowflakes);
-            br.newLine();
-            br.write(""+posx);
-            br.newLine();
-            br.write(""+posy);
-            br.newLine();
-            br.write(""+randomseed);
-
+            br.write("" + typedSeed);
             br.close();
-
 
         }
         catch (Exception e) {
-            System.out.println("please play a game to save first");
+            System.out.println("Please play a game to save first!");
         }
 
     }
@@ -217,42 +376,29 @@ public class TrueDemo {
     public void load() {
         try {
             BufferedReader games = new BufferedReader(new FileReader("save.txt"));
-            avatar = Integer.parseInt(games.readLine());
-
-            numofsnowflakes = Integer.parseInt(games.readLine());
-            posx = Integer.parseInt(games.readLine());
-            posy = Integer.parseInt(games.readLine());
-            randomseed = Integer.parseInt(games.readLine());
-
+            int avatar = Integer.parseInt(games.readLine());
+            String s = games.readLine();
+            TrueEngine engine = new TrueEngine();
+            engine.interactWithInputString(s, avatar);
         }
         catch (Exception e) {
-            System.out.println("please play a game to load first");
+            System.out.println("Please play a game to load first!");
         }
-
     }
+
     public void replay() {
         try {
             BufferedReader games = new BufferedReader(new FileReader("replay.txt"));
-            avatar = Integer.parseInt(games.readLine());
-
-            numofsnowflakes = Integer.parseInt(games.readLine());
-            posx = Integer.parseInt(games.readLine());
-            posy = Integer.parseInt(games.readLine());
-            randomseed = Integer.parseInt(games.readLine());
+            int avatar = Integer.parseInt(games.readLine());
+            String s = games.readLine();
+            TrueEngine engine = new TrueEngine();
+            engine.interactWithInputString(s, avatar, true);
 
         }
         catch (Exception e) {
-            System.out.println("please play a game to replay first");
+            System.out.println("Please play a game to replay first!");
         }
-
     }
-
-
-
-
-
-
-
 
 
     private void clearWalls(TETile[][] tiles, Random random) {
@@ -504,8 +650,6 @@ public class TrueDemo {
         int y = 0;
         switch (direction) {
             case North:
-                x = seed.nextInt(ra.x + 1, ra.x + ra.width - 1);
-                y = ra.y + ra.height - 1;
                 break;
             case East:
                 x = ra.x + ra.width - 1;
