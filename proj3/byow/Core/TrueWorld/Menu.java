@@ -33,6 +33,8 @@ public class Menu {
         StdDraw.text(WIDTH / 2, 4* HEIGHT / 5, "CS61B: THE GAME");
         StdDraw.setFont(tinyFont);
         StdDraw.text(5, 1, "Credits: Evelyn Ho, Carlos Rodriguez");
+        StdDraw.show();
+
         StdDraw.setFont(smallFont);
         StdDraw.text(WIDTH / 2,  HEIGHT / 2 + 2, "New Game (N)");
         StdDraw.text(WIDTH / 2, HEIGHT / 2 + 1, "Load Game (L)");

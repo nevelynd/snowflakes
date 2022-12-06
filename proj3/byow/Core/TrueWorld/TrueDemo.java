@@ -51,7 +51,7 @@ public class TrueDemo {
         createHallways(myTrueDemo, random);
         certifyOrigin(myTrueDemo, rooms.get(0));
         clearWalls(myTrueDemo, random);
-        ter.initialize(WIDTH, HEIGHT, 0, -2);
+        ter.initialize(WIDTH, HEIGHT, 0 , 0);
         ter.renderFrame(myTrueDemo);
         playGame(myTrueDemo, random, avatar, s[0]);
     }
@@ -65,7 +65,7 @@ public class TrueDemo {
         createHallways(tiles, random);
         certifyOrigin(tiles, rooms.get(0));
         clearWalls(tiles, random);
-        ter.initialize(WIDTH, HEIGHT, 0, -2);
+        ter.initialize(WIDTH, HEIGHT, 0, 0);
         ter.renderFrame(tiles);
         playGameState(tiles, random, avatar, remaining, total, replay);
         return tiles;
@@ -146,13 +146,20 @@ public class TrueDemo {
                 keysLeft -= 1;
                 initialTile = Tileset.FLOOR;
             }
+
+
             if (replay) {
                 ter.renderFrame(tiles, true);
+            }
+
+            if (gameOver) {
+                System.exit(0);
             }
         }
         ter.renderFrame(tiles);
         if (!replay) {
             while (!gameOver) {
+                hoverHUD(tiles);
 
                 while (StdDraw.hasNextKeyTyped()) {
                     char letter = StdDraw.nextKeyTyped();
@@ -205,9 +212,16 @@ public class TrueDemo {
                         keysLeft -= 1;
                         initialTile = Tileset.FLOOR;
                     }
+                    if (keysLeft ==0  ){
+                        gameOver = true;
+                    }
                     ter.renderFrame(tiles);
+                    displayHUD(tiles, null, keysLeft);
                 }
             }
+        }
+        if (gameOver) {
+            System.exit(0);
         }
     }
 
@@ -241,6 +255,8 @@ public class TrueDemo {
         int keysLeft;
         snowflakesNum = seed.nextInt(5, validCoordinates.size());
         keysLeft = snowflakesNum;
+
+
 
         for (int i = 0; i < snowflakesNum; i++) {
             int randomIndex = seed.nextInt(validCoordinates.size());
@@ -312,8 +328,13 @@ public class TrueDemo {
                     initialTile = Tileset.FLOOR;
                     displayHUD(tiles, HUD, keysLeft);
                 }
+
+
                 ter.renderFrame(tiles);
             }
+        }
+        if (gameOver) {
+            System.exit(0);
         }
     }
 
@@ -322,10 +343,10 @@ public class TrueDemo {
         for (char i : "keys left:".toCharArray()) {
             TETile I = new TETile(i, Color.white, Color.black,
                     "i");
-            world[r][HEIGHT - 1] = I;
+            world[r][HEIGHT -1] = I;
             r+=1;
         }
-        for (int i = r; i <= snowflakesNum + r ; i++) {
+        for (int i = r; i < snowflakesNum + r ; i++) {
             if (keysLeft>0) {
                 world[i][HEIGHT - 1] = Tileset.SNOWFLAKE;
                 keysLeft -=1;
@@ -422,8 +443,12 @@ public class TrueDemo {
 
     public TETile[][] declareWorldT(TETile[][] tiles, Random seed) {
         for (int x = 0; x < WIDTH; x += 1) {
-            for (int y = 0; y < HEIGHT; y += 1) {
-                tiles[x][y] = Tileset.NOTHING;
+            for (int y = 0; y < HEIGHT ; y += 1) {
+                if (y == HEIGHT - 1 ) {
+                    tiles[x][y] = Tileset.NOTHING;
+
+                }
+                  else {
                 int worldLayout = seed.nextInt(10);
                 switch(worldLayout) {
                     case 0:
@@ -447,7 +472,7 @@ public class TrueDemo {
                         tiles[x][y] = Tileset.SAND;
                         break;
                 }
-            }
+            }}
         }
         return tiles;
     }
@@ -466,7 +491,7 @@ public class TrueDemo {
                 xs = seed.nextInt(0, WIDTH - roomWidth);
                 ys = seed.nextInt(0, HEIGHT - roomHeight);
                 ra = new Rectangle(xs, ys, roomHeight, roomWidth);
-                if (ra.x > WIDTH || ra.y > HEIGHT || ra.x <= 0 || ra.y - 1 <= 0) {
+                if (ra.x > WIDTH || ra.y > HEIGHT - 1 || ra.x <= 0 || ra.y - 1 <= 0) {
                     continue;
                 }
                 int radius = ra.width / 2 + 5;
